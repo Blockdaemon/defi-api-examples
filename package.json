@@ -1,0 +1,32 @@
+{
+  "name": "defi-ts",
+  "version": "0.0.2",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RafaelAPB/layerzero-set-oracle-tools.git"
+  },
+  "author": "Rafael Belchior",
+  "license": "Blockdaemon",
+  "bugs": {
+    "url": "https://github.com/Blockdaemon/oapp-utils-bd/issues"
+  },
+  "homepage": "https://github.com/Blockdaemon/oapp-utils-bd",
+  "devDependencies": {
+    "npx": "3.0.0",
+    "ts-node": "10.9.2",
+    "tsc": "2.0.4",
+    "typescript": "5.3.3"
+  },
+  "dependencies": {
+    "@jonaspf/blockdaemon-defi-api-typescript-fetch.js": "0.0.0",
+    "dotenv": "16.3.1",
+    "ethers": "^6.12.1",
+    "log4js": "6.9.1",
+    "npm": "10.7.0"
+  }
+}
