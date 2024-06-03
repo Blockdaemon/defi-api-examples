@@ -9,24 +9,25 @@ import {
 const log = logger.getLogger("get-prices");
 async function main() {
     const api = new PriceApi(apiConfig);
-        // eth
-        const tokens = ["0x0000000000000000000000000000000000000000"];
+    // eth token in eth mainnet
+    const tokens = ["0x0000000000000000000000000000000000000000"];
 
-        const request: PriceRequest = {
-            chain_id: "1",
-            tokens: tokens,
-            currency: CurrencyCode.Usd,
-        };
+    const request = {
+      chainID: "1",
+      tokens: tokens,
+      currency: "USD" as CurrencyCode,
+    };
 
-        const priceParameters: GetPriceRequest = {
-            priceRequest: request,
-        };
+    const priceParameters = {
+      priceRequest: request as PriceRequest,
+    };
 
 
     try {
-        const prices = await api.getPrice(priceParameters);
-    log.info("Got prices");
-    log.info(prices);
+      // todo update sdk version
+      const prices = await api.getPrice(priceParameters);
+      log.info("Got prices");
+      log.info(prices);
 
   } catch (error) {
     log.error("Failed to get prices");
