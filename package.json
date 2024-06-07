@@ -25,7 +25,7 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
-    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "^1.10.0",
+    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "^1.11",
     "dotenv": "16.3.1",
     "ethers": "6.12.1",
     "log4js": "6.9.1",

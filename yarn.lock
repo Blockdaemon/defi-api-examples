@@ -7,7 +7,7 @@
   resolved "https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.10.1.tgz"
   integrity sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==
 
-"@blockdaemon/blockdaemon-defi-api-typescript-fetch@^1.10.0":
+"@blockdaemon/blockdaemon-defi-api-typescript-fetch@latest":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@blockdaemon/blockdaemon-defi-api-typescript-fetch/-/blockdaemon-defi-api-typescript-fetch-1.11.1.tgz#c282e94bfd98ac3b5b693fb631a21ce91a783f31"
   integrity sha512-ZytJni+hMyJAR5sJHmvakNb0w9YlShKsmPXJ/cBd+3fNna6kPxbNdCpmnAzwBIah4h5DAbwdCeCpIHGPFhQq8Q==
