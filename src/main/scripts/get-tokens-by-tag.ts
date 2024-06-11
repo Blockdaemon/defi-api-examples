@@ -8,15 +8,18 @@ const log = logger.getLogger("get-tokens");
 async function main() {
   const api = new TokensApi(apiConfig);
 
-  // get all USDC token data
+  const tags = await api.getTokenTags();
+  log.info("Available tags")
+  log.info(JSON.stringify(tags, null, 2));
 
   const tokensParameters: GetTokensRequest = {
-    tokenSymbol: "USDC",
+    tagLimit: ["stablecoin"],
+    chainID: "1"
   };
 
   try {
     const someTokens = await api.getTokens(tokensParameters);
-    log.info("Got USDC tokens");
+    log.info("Got Ethereum Stablecoins");
     log.info(JSON.stringify(someTokens, null, 2));
   } catch (error) {
     log.error("Failed to get tokens");

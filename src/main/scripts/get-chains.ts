@@ -3,28 +3,24 @@ import {
   apiConfig,
 } from "../utils/common";
 import {
-    ChainsApi,
-    GetChainsRequest,
+  ChainsApi,
+  GetChainsRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
 const log = logger.getLogger("get-chains");
 async function main() {
   const api = new ChainsApi(apiConfig);
 
-  const chainsParameters: GetChainsRequest = {
-    chainID: "137",
-  };
+  // get only polygon chains
 
-  const allChainsParameters: GetChainsRequest = {
+  const chainsParameters: GetChainsRequest = {
+    chainName: "polygon",
   };
 
   try {
-    const polygonChain = await api.getChains(chainsParameters);
-    log.info("Got chain");
-    log.info(polygonChain);
-    const allChains = await api.getChains(allChainsParameters);
+    const chains = await api.getChains(chainsParameters);
     log.info("Got chains");
-    log.info(allChains);
+    log.info(JSON.stringify(chains, null, 2));
   } catch (error) {
     log.error("Failed to get chains");
     log.debug(error);
