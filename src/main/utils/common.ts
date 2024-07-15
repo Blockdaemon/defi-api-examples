@@ -55,7 +55,7 @@ export const OPTIMISM_RPC =
   if (!mnemonic) {
     throw new Error("MNEMONIC is not defined");
   }
-
+  
   export const polygonWallet = Wallet.fromPhrase(mnemonic, polygonProvider);
   export const optimismWallet = Wallet.fromPhrase(mnemonic, optimismProvider);
   
