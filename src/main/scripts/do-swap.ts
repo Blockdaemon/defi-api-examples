@@ -1,6 +1,6 @@
 import { getRoutes } from "../endpoints/exchange";
 import {
-  logger,
+  log,
   polygonWallet,
   optimismWallet,
   optimismProvider,
@@ -16,7 +16,7 @@ import {
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { ethers } from "ethers";
 
-const log = logger.getLogger("do-swap");
+const logger = log.getLogger("do-swap");
 
 async function main() {
   const api = new ExchangeApi(apiConfig);
@@ -34,14 +34,12 @@ async function main() {
 
   try {
     //  const routes: RoutesResponse = await api.getRoutes(routeParameters);
-    //   log.info("Got routes");
+    //   logger.info("Got routes");
 
     //   const selectedRoute: Route = routes.routes[0];
-    //   log.info("Selected route:");
+    //   logger.info("Selected route:");
     //   const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
 
-
-    
     const destination = RECEIVER_ADDRESS;
     const txPayload =
       "0x0b4cb5d80000000000000000000000000000000000000000000000000000000000000140000000000000000000000000000000000000000000000000038d34169c6b532200000000000000000000000000000000000000000000000009497c1a68fe583400000000000000000000000000000000000000000000000000000000669a767900000000000000000000000000000000000000000000000009497c1a68fe583400000000000000000000000000000000000000000000000000000000669a7679000000000000000000000000b3c68a491608952cb1257fc9909a537a0173b63b0000000000000000000000009298dfd8a0384da62643c2e98f437e820029e75e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b017ed3df2acd34e91f651533afaa9e9c4cfcd499a3ca0cf327c00c8e8cfbe90000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000da10009cbd5d07dd0cecc66161fc93d7c9000da1000000000000000000000000f271aafc62634e6dc9a276ac0f6145c4fdbe2ced0000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000089000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003686f7000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
@@ -49,10 +47,10 @@ async function main() {
     const broadcastResult = await transact(signedPayload, destination);
 
     if (broadcastResult) {
-      log.info("Successfully broadcast signed data to Optimism");
-      log.debug("Broadcast result:", broadcastResult);
-      log.info("Transaction hash:", broadcastResult.hash);
-      log.info(
+      logger.info("Successfully broadcast signed data to Optimism");
+      logger.debug("Broadcast result:", broadcastResult);
+      logger.info("Transaction hash:", broadcastResult.hash);
+      logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
           broadcastResult.hash
       );
@@ -60,13 +58,13 @@ async function main() {
       throw new Error("Failed to broadcast signed message");
     }
   } catch (error) {
-    log.error("Failed to sign and broadcast");
-    log.debug(error);
+    logger.error("Failed to sign and broadcast");
+    logger.debug(error);
   }
 }
 main().catch((err) => {
-  log.error("There was an error");
-  log.debug(err);
+  logger.error("There was an error");
+  logger.debug(err);
 });
 
 async function transact(signedMessage: string, recipientAddress: string) {
@@ -84,13 +82,13 @@ async function transact(signedMessage: string, recipientAddress: string) {
       gasPrice: gasPrice,
     });
 
-    log.info("Transaction sent. Waiting for confirmation...");
+    logger.info("Transaction sent. Waiting for confirmation...");
     await transactionResponse.wait();
-    log.info("Transaction confirmed.");
+    logger.info("Transaction confirmed.");
     return transactionResponse;
   } catch (error) {
-    log.error("Error broadcasting signed message");
-    log.debug("Error details:", error);
+    logger.error("Error broadcasting signed message");
+    logger.debug("Error details:", error);
     return null;
   }
 }
@@ -100,11 +98,11 @@ async function signMessage(data: string) {
     const signedMessage = await optimismWallet.signMessage(
       JSON.stringify(data)
     );
-    log.info("Signed message:", signedMessage);
+    logger.info("Signed message:", signedMessage);
     return signedMessage;
   } catch (error) {
-    log.error("Error signing message");
-    log.debug(error);
+    logger.error("Error signing message");
+    logger.debug(error);
     throw error;
   }
 }

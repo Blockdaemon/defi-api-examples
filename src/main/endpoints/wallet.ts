@@ -1,8 +1,8 @@
 import Web3, { TransactionReceipt } from "web3";
 import { HDNodeWallet } from "ethers";
-import log4js from "log4js";
+import { log } from "../utils/common"
 
-const log = log4js.getLogger("wallet");
+const logger = log.getLogger("wallet");
 
 async function signAndBroadcastTransaction(
   transactionData: string,
@@ -27,16 +27,16 @@ async function signAndBroadcastTransaction(
     const signedTx = await wallet.signTransaction(txObject);
 
     if (signedTx) {
-      log.debug("Sending transaction...");
+      logger.debug("Sending transaction...");
       const receipt = await web3.eth.sendSignedTransaction(signedTx);
-      log.debug("Transaction sent");
+      logger.debug("Transaction sent");
       return receipt;
     } else {
       throw new Error("Transaction signing failed");
     }
   } catch (error) {
-    log.error("Failed to sign or broadcast transaction");
-    log.debug(error);
+    logger.error("Failed to sign or broadcast transaction");
+    logger.debug(error);
     throw error;
   }
 }
@@ -50,7 +50,7 @@ async function estimateGas(
     const gasAmount = await web3.eth.estimateGas({ to: recipient, data: data });
     return Number(gasAmount);
   } catch (error) {
-    log.error("Estimation Error: ", error);
+    logger.error("Estimation Error: ", error);
     throw error;
   }
 }
@@ -60,7 +60,7 @@ async function getGasPrice(web3: Web3): Promise<number> {
     const gasPrice = await web3.eth.getGasPrice();
     return Number(gasPrice);
   } catch (error) {
-    log.error("Estimation Error: ", error);
+    logger.error("Estimation Error: ", error);
     throw error;
   }
 }

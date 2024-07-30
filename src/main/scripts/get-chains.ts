@@ -1,13 +1,10 @@
-import {
-  logger,
-  apiConfig,
-} from "../utils/common";
+import { log, apiConfig } from "../utils/common";
 import {
   ChainsApi,
   GetChainsRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
-const log = logger.getLogger("get-chains");
+const logger = log.getLogger("get-chains");
 async function main() {
   const api = new ChainsApi(apiConfig);
 
@@ -19,15 +16,15 @@ async function main() {
 
   try {
     const chains = await api.getChains(chainsParameters);
-    log.info("Got chains");
-    log.info(JSON.stringify(chains, null, 2));
+    logger.info("Got chains");
+    logger.info(JSON.stringify(chains, null, 2));
   } catch (error) {
-    log.error("Failed to get chains");
-    log.debug(error);
+    logger.error("Failed to get chains");
+    logger.debug(error);
   }
 }
 
 main().catch((err) => {
-  log.error("There was an error");
-  log.debug(err);
+  logger.error("There was an error");
+  logger.debug(err);
 });

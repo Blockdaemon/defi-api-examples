@@ -1,9 +1,4 @@
-import {
-  logger,
-  polygonWallet,
-  optimismWallet,
-  apiConfig,
-} from "../utils/common";
+import { log, polygonWallet, optimismWallet, apiConfig } from "../utils/common";
 import {
   ExchangeApi,
   GetRoutesRequest,
@@ -11,24 +6,24 @@ import {
   RoutesResponse,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
-const log = logger.getLogger("exchange");
+const logger = log.getLogger("exchange");
 
 export function doSwap(transactionPayload: string): void {
-  log.info("Swapping");
+  logger.info("Swapping");
 }
 
 export async function getRoutes(
   api: ExchangeApi,
   routeParameters: GetRoutesRequest
 ): Promise<RoutesResponse> {
-  log.info("Calculating routes, this may take some time ...");
-    try {
-      const routes = await api.getRoutes(routeParameters);
-      return routes;
-    } catch (error) {
-      throw error;
-    }
+  logger.info("Calculating routes, this may take some time ...");
+  try {
+    const routes = await api.getRoutes(routeParameters);
+    return routes;
+  } catch (error) {
+    throw error;
+  }
 }
 export function getQuote(api: ExchangeApi): void {
-  log.info("getting quote");
+  logger.info("getting quote");
 }

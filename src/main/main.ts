@@ -1,9 +1,4 @@
-import {
-  logger,
-  polygonWallet,
-  optimismWallet,
-  apiConfig,
-} from "./utils/common";
+import { log, polygonWallet, optimismWallet, apiConfig } from "./utils/common";
 import {
   ExchangeApi,
   ChainsApi,
@@ -14,41 +9,41 @@ import {
   IntegrationsApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
-const log = logger.getLogger("tool");
+const logger = log.getLogger("tool");
 
 async function main() {
-  log.info("Checking that APIs can be initialized");
+  logger.info("Checking that APIs can be initialized");
   try {
     const exchange = new ExchangeApi(apiConfig);
-    log.info("Initialized Exchange API");
-    log.info(exchange.getRoutes.toString());
+    logger.info("Initialized Exchange API");
+    logger.info(exchange.getRoutes.toString());
     const chains = new ChainsApi(apiConfig);
-    log.info("Initialized Chains API");
-    log.info(chains.getChains.toString());
+    logger.info("Initialized Chains API");
+    logger.info(chains.getChains.toString());
     const accounts = new AccountApi(apiConfig);
-    log.info("Initialized Account API");
-    log.info(accounts.createApproval.toString());
+    logger.info("Initialized Account API");
+    logger.info(accounts.getTokenApproval.toString());
     const tokens = new TokensApi(apiConfig);
-    log.info("Initialized Tokens API");
-    log.info(tokens.getTokens.toString());
+    logger.info("Initialized Tokens API");
+    logger.info(tokens.getTokens.toString());
     const status = new StatusApi(apiConfig);
-    log.info("Initialized Status API");
-    log.info(status.getStatus.toString());
+    logger.info("Initialized Status API");
+    logger.info(status.getStatus.toString());
     const price = new PriceApi(apiConfig);
-    log.info("Initialized Price API");
-    log.info(price.getPrice.toString());
+    logger.info("Initialized Price API");
+    logger.info(price.getPrice.toString());
     const integrations = new IntegrationsApi(apiConfig);
-    log.info("Initialized Integrations API");
-    log.info(integrations.getIntegrations.toString());
+    logger.info("Initialized Integrations API");
+    logger.info(integrations.getIntegrations.toString());
 
-    log.info("APIs initialized successfully");
+    logger.info("APIs initialized successfully");
   } catch (e) {
-    log.error("Failed to initialize API");
-    log.debug(e);
+    logger.error("Failed to initialize API");
+    logger.debug(e);
   }
 }
 
 main().catch((err) => {
-  log.error("There was an error");
-  log.debug(err);
+  logger.error("There was an error");
+  logger.debug(err);
 });

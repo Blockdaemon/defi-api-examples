@@ -1,10 +1,10 @@
-import { logger, apiConfig } from "../utils/common";
+import { log, apiConfig } from "../utils/common";
 import {
   TokensApi,
   GetTokensRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
-const log = logger.getLogger("get-tokens");
+const logger = log.getLogger("get-tokens");
 async function main() {
   const api = new TokensApi(apiConfig);
 
@@ -16,15 +16,15 @@ async function main() {
 
   try {
     const someTokens = await api.getTokens(tokensParameters);
-    log.info("Got USDC tokens");
-    log.info(JSON.stringify(someTokens, null, 2));
+    logger.info("Got USDC tokens");
+    logger.info(JSON.stringify(someTokens, null, 2));
   } catch (error) {
-    log.error("Failed to get tokens");
-    log.debug(error);
+    logger.error("Failed to get tokens");
+    logger.debug(error);
   }
 }
 
 main().catch((err) => {
-  log.error("There was an error");
-  log.debug(err);
+  logger.error("There was an error");
+  logger.debug(err);
 });

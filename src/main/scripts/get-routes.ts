@@ -1,17 +1,12 @@
 import { getRoutes } from "../endpoints/exchange";
-import {
-  logger,
-  polygonWallet,
-  optimismWallet,
-  apiConfig,
-} from "../utils/common";
+import { log, polygonWallet, optimismWallet, apiConfig } from "../utils/common";
 import {
   ExchangeApi,
   GetRoutesRequest,
   RoutesResponse,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
-const log = logger.getLogger("get-routes");
+const logger = log.getLogger("get-routes");
 async function main() {
   const api = new ExchangeApi(apiConfig);
 
@@ -28,15 +23,18 @@ async function main() {
 
   try {
     const routes = await api.getRoutes(routeParameters);
-    log.info("Got routes");
-    log.info(routes);
+    logger.info("Got routes");
+    const chosenRoute = routes.routes[0];
+    logger.info(chosenRoute);
+    const approvalAddress = chosenRoute.steps[0].estimate.approvalAddress;
+    const transactionPayload = chosenRoute.transactionRequest.data;
   } catch (error) {
-    log.error("Failed to execute swap");
-    log.debug(error);
+    logger.error("Failed to execute swap");
+    logger.debug(error);
   }
 }
 
 main().catch((err) => {
-  log.error("There was an error");
-  log.debug(err);
+  logger.error("There was an error");
+  logger.debug(err);
 });
