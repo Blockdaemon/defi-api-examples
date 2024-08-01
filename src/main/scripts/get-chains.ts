@@ -8,8 +8,7 @@ const logger = log.getLogger("get-chains");
 async function main() {
   const api = new ChainsApi(apiConfig);
 
-  // get only polygon chains
-
+  // get polygon; no parameters to get all chains
   const chainsParameters: GetChainsRequest = {
     chainName: "polygon",
   };

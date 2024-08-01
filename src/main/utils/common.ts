@@ -87,7 +87,7 @@ export async function broadcastSignedMessage(
     const tx = {
       to: RECEIVER_ADDRESS,
       data: signedMessage,
-      value: ethers.parseEther("0"),
+      value: "0",
     };
 
     const transactionResponse = await optimismWallet.sendTransaction(tx);

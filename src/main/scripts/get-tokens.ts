@@ -9,7 +9,6 @@ async function main() {
   const api = new TokensApi(apiConfig);
 
   // get all USDC token data
-
   const tokensParameters: GetTokensRequest = {
     tokenSymbol: "USDC",
   };

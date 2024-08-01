@@ -22,14 +22,17 @@ async function main() {
   };
 
   try {
-    const routes = await api.getRoutes(routeParameters);
+    const routes: RoutesResponse = await api.getRoutes(routeParameters);
     logger.info("Got routes");
-    const chosenRoute = routes.routes[0];
-    logger.info(chosenRoute);
-    const approvalAddress = chosenRoute.steps[0].estimate.approvalAddress;
-    const transactionPayload = chosenRoute.transactionRequest.data;
+    if (routes.routes.length > 0) {
+      logger.info("Printing first route:")
+      logger.info(JSON.stringify(routes.routes[0], null, 2));
+    } else {
+      logger.warn("Routes returned but empty object")
+    }
+
   } catch (error) {
-    logger.error("Failed to execute swap");
+    logger.error("Failed to get routes");
     logger.debug(error);
   }
 }
