@@ -10,16 +10,21 @@ import {
 } from "../utils/common";
 import {
   ExchangeApi,
+  AccountApi,
+  StatusApi,
   GetRoutesRequest,
   Route,
   RoutesResponse,
+  GetTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { ethers } from "ethers";
 
 const logger = log.getLogger("do-swap");
 
 async function main() {
-  const api = new ExchangeApi(apiConfig);
+  const exchangeAPI = new ExchangeApi(apiConfig);
+  const accountAPI = new AccountApi(apiConfig);
+  const statusAPI = new StatusApi(apiConfig);
 
   const routeParameters: GetRoutesRequest = {
     fromChain: "10", // Optimism
@@ -33,16 +38,35 @@ async function main() {
   };
 
   try {
-    //  const routes: RoutesResponse = await api.getRoutes(routeParameters);
-    //   logger.info("Got routes");
+    const routes: RoutesResponse = await exchangeAPI.getRoutes(routeParameters);
+    logger.info("Got routes");
 
-    //   const selectedRoute: Route = routes.routes[0];
-    //   logger.info("Selected route:");
-    //   const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
+    const selectedRoute: Route = routes.routes[0];
+    logger.info("Selected route:");
+    logger.info(JSON.stringify(selectedRoute, null, 2));
 
-    const destination = RECEIVER_ADDRESS;
-    const txPayload =
-      "0x0b4cb5d80000000000000000000000000000000000000000000000000000000000000140000000000000000000000000000000000000000000000000038d34169c6b532200000000000000000000000000000000000000000000000009497c1a68fe583400000000000000000000000000000000000000000000000000000000669a767900000000000000000000000000000000000000000000000009497c1a68fe583400000000000000000000000000000000000000000000000000000000669a7679000000000000000000000000b3c68a491608952cb1257fc9909a537a0173b63b0000000000000000000000009298dfd8a0384da62643c2e98f437e820029e75e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b017ed3df2acd34e91f651533afaa9e9c4cfcd499a3ca0cf327c00c8e8cfbe90000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000da10009cbd5d07dd0cecc66161fc93d7c9000da1000000000000000000000000f271aafc62634e6dc9a276ac0f6145c4fdbe2ced0000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000089000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003686f7000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    
+    const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
+/*
+    const approvalRequest: GetTokenApprovalRequest = {
+      chainID: routeParameters.fromChain,
+      accountAddress: routeParameters.fromAddress,
+      tokenAddress: routeParameters.toToken,
+      spenderAddress: approvalAddress,
+    }
+
+    const approval = await accountAPI.getTokenApproval(approvalRequest);
+    logger.info("Got approval");
+    logger.info(JSON.stringify(approval, null, 2));
+
+    // set timeout 10 seconds, await the approval to propagate
+    await new Promise(resolve => setTimeout(resolve, 10000));    
+
+    logger.info("Sending transaction...");
+
+    */
+    const destination = approvalAddress;
+    const txPayload = selectedRoute.transactionRequest.data;
     const signedPayload = await signMessage(txPayload);
     const broadcastResult = await transact(signedPayload, destination);
 
@@ -54,6 +78,7 @@ async function main() {
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
           broadcastResult.hash,
       );
+      logger.info("Transaction done with success. Please check your balances.");
     } else {
       throw new Error("Failed to broadcast signed message");
     }
