@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch-tsc": "tsc --build --watch",
-    "build": "tsc -p . --outDir ./build"
+    "build": "tsc -p . --outDir ./build",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "repository": {
     "type": "git",
@@ -19,15 +21,18 @@
   },
   "homepage": "https://github.com/Blockdaemon/defi-api-examples",
   "devDependencies": {
-    "npx": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "8.0.0",
+    "@typescript-eslint/parser": "8.0.0",
+    "eslint": "9.8.0",
+    "npx": "3.0.0",
     "ts-node": "10.9.2",
     "tsc": "2.0.4",
     "typescript": "5.3.3"
   },
   "dependencies": {
-    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "^1.15",
+    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "1.19.1",
     "dotenv": "16.3.1",
-    "ethers": "^6.13.1",
+    "ethers": "6.13.1",
     "log4js": "6.9.1",
     "web3": "4.8.0"
   }
