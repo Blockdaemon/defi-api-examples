@@ -7,8 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch-tsc": "tsc --build --watch",
     "build": "tsc -p . --outDir ./build",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint": "run-s format:eslint format:prettier",
+    "format:eslint": "eslint . --fix",
+    "format:prettier": "prettier --write --config .prettierrc.js \"./**/{*.ts,*.js}\"",
+    "lint:check": "eslint .",
+    "format:check": "prettier --check --config .prettierrc.js \"./**/{*.ts,*.js}\""
   },
   "repository": {
     "type": "git",
@@ -23,8 +26,11 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "8.0.0",
     "@typescript-eslint/parser": "8.0.0",
-    "eslint": "9.8.0",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-config-standard": "17.1.0",
     "npx": "3.0.0",
+    "prettier": "3.3.3",
     "ts-node": "10.9.2",
     "tsc": "2.0.4",
     "typescript": "5.3.3"

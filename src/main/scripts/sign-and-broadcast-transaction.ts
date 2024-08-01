@@ -18,7 +18,7 @@ async function main() {
       logger.info("Transaction hash:", broadcastResult.hash);
       logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
-          broadcastResult.hash
+          broadcastResult.hash,
       );
     } else {
       throw new Error("Failed to broadcast signed message");

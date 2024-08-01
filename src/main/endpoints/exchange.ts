@@ -14,7 +14,7 @@ export function doSwap(transactionPayload: string): void {
 
 export async function getRoutes(
   api: ExchangeApi,
-  routeParameters: GetRoutesRequest
+  routeParameters: GetRoutesRequest,
 ): Promise<RoutesResponse> {
   logger.info("Calculating routes, this may take some time ...");
   try {

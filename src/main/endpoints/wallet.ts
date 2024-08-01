@@ -1,6 +1,6 @@
 import Web3, { TransactionReceipt } from "web3";
 import { HDNodeWallet } from "ethers";
-import { log } from "../utils/common"
+import { log } from "../utils/common";
 
 const logger = log.getLogger("wallet");
 
@@ -9,7 +9,7 @@ async function signAndBroadcastTransaction(
   toAddress: string,
   value: string,
   wallet: HDNodeWallet,
-  rpcUrl: string
+  rpcUrl: string,
 ): Promise<TransactionReceipt | undefined> {
   const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
   const txCount = await web3.eth.getTransactionCount(wallet.address);
@@ -44,7 +44,7 @@ async function signAndBroadcastTransaction(
 async function estimateGas(
   web3: Web3,
   recipient: string,
-  data: string
+  data: string,
 ): Promise<number> {
   try {
     const gasAmount = await web3.eth.estimateGas({ to: recipient, data: data });

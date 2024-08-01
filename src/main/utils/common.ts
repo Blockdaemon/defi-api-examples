@@ -39,12 +39,12 @@ export const RECEIVER_ADDRESS: string =
 export const POLYGON_RPC =
   "https://svc.blockdaemon.com/polygon/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
     "YOUR_API_KEY",
-    API_KEY
+    API_KEY,
   );
 export const OPTIMISM_RPC =
   "https://svc.blockdaemon.com/optimism/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
     "YOUR_API_KEY",
-    API_KEY
+    API_KEY,
   );
 
 export const polygonProvider = new JsonRpcProvider(POLYGON_RPC);
@@ -68,7 +68,7 @@ export const apiConfig = new Configuration({
 export async function signMessage(log: Logger, data: string) {
   try {
     const signedMessage = await optimismWallet.signMessage(
-      JSON.stringify(data)
+      JSON.stringify(data),
     );
     log.info("Signed message:", signedMessage);
     return signedMessage;
@@ -79,7 +79,10 @@ export async function signMessage(log: Logger, data: string) {
   }
 }
 
-export async function broadcastSignedMessage(log: Logger, signedMessage: string) {
+export async function broadcastSignedMessage(
+  log: Logger,
+  signedMessage: string,
+) {
   try {
     const tx = {
       to: RECEIVER_ADDRESS,

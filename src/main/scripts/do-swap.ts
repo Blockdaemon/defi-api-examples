@@ -52,7 +52,7 @@ async function main() {
       logger.info("Transaction hash:", broadcastResult.hash);
       logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
-          broadcastResult.hash
+          broadcastResult.hash,
       );
     } else {
       throw new Error("Failed to broadcast signed message");
@@ -96,7 +96,7 @@ async function transact(signedMessage: string, recipientAddress: string) {
 async function signMessage(data: string) {
   try {
     const signedMessage = await optimismWallet.signMessage(
-      JSON.stringify(data)
+      JSON.stringify(data),
     );
     logger.info("Signed message:", signedMessage);
     return signedMessage;
