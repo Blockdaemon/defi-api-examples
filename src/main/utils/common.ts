@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import log4js, { Logger } from "log4js";
 import { Wallet, JsonRpcProvider } from "ethers";
 import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import ethers from "ethers";
 
 dotenv.config();
 

@@ -11,8 +11,7 @@ const logger = log.getLogger("sign and broadcast");
 
 async function main() {
   try {
-    const rawDataToSign =
-      "hello world"; // data to sign, this can be a transaction payload or any data you want to sign
+    const rawDataToSign = "hello world"; // data to sign, this can be a transaction payload or any data you want to sign
 
     const signedMessage = await signMessage(logger, rawDataToSign);
 
@@ -43,9 +42,8 @@ async function main() {
       );
       logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
-         anotherResult.transactionHash,
+          anotherResult.transactionHash,
       );
-      
     } else {
       throw new Error("Failed to broadcast signed message");
     }

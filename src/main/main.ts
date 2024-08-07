@@ -1,4 +1,4 @@
-import { log, polygonWallet, optimismWallet, apiConfig } from "./utils/common";
+import { log, apiConfig } from "./utils/common";
 import {
   ExchangeApi,
   ChainsApi,

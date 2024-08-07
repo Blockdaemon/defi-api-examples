@@ -1,4 +1,3 @@
-import { getRoutes } from "../endpoints/exchange";
 import { log, polygonWallet, optimismWallet, apiConfig } from "../utils/common";
 import {
   ExchangeApi,
@@ -25,12 +24,11 @@ async function main() {
     const routes: RoutesResponse = await api.getRoutes(routeParameters);
     logger.info("Got routes");
     if (routes.routes.length > 0) {
-      logger.info("Printing first route:")
+      logger.info("Printing first route:");
       logger.info(JSON.stringify(routes.routes[0], null, 2));
     } else {
-      logger.warn("Routes returned but empty object")
+      logger.warn("Routes returned but empty object");
     }
-
   } catch (error) {
     logger.error("Failed to get routes");
     logger.debug(error);
