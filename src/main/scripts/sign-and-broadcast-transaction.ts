@@ -1,18 +1,34 @@
-import { log, signMessage, broadcastSignedMessage } from "../utils/common";
-import { ethers } from "ethers";
-
+import {
+  log,
+  signMessage,
+  broadcastSignedMessage,
+  RECEIVER_ADDRESS,
+  optimismWallet,
+  OPTIMISM_RPC,
+} from "../utils/common";
+import { signAndBroadcastTransaction } from "../endpoints/wallet";
 const logger = log.getLogger("sign and broadcast");
 
 async function main() {
   try {
-    const dataToSign =
+    const rawDataToSign =
       "hello world"; // data to sign, this can be a transaction payload or any data you want to sign
 
-    const signedMessage = await signMessage(logger, dataToSign);
+    const signedMessage = await signMessage(logger, rawDataToSign);
 
+    // simple broadcast of signed message
     const broadcastResult = await broadcastSignedMessage(logger, signedMessage);
 
-    if (broadcastResult) {
+    // another method of signing and broadcasting
+    const anotherResult = await signAndBroadcastTransaction(
+      rawDataToSign,
+      RECEIVER_ADDRESS,
+      "0",
+      optimismWallet.privateKey,
+      OPTIMISM_RPC,
+    );
+
+    if (broadcastResult && anotherResult) {
       logger.info("Successfully broadcast signed data to Optimism");
       logger.debug("Broadcast result:", broadcastResult);
       logger.info("Transaction hash:", broadcastResult.hash);
@@ -20,6 +36,16 @@ async function main() {
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
           broadcastResult.hash,
       );
+
+      logger.info(
+        "Result from another method of signing and broadcasting:",
+        anotherResult,
+      );
+      logger.info(
+        "Check transaction at: https://optimistic.etherscan.io/tx/" +
+         anotherResult.transactionHash,
+      );
+      
     } else {
       throw new Error("Failed to broadcast signed message");
     }
