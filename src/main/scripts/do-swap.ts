@@ -1,30 +1,26 @@
-import { getRoutes } from "../endpoints/exchange";
 import {
   log,
   polygonWallet,
   optimismWallet,
-  optimismProvider,
-  RECEIVER_ADDRESS,
-  SENDER_ADDRESS,
   apiConfig,
+  // signMessage,
+  // broadcastSignedMessage,
 } from "../utils/common";
 import {
   ExchangeApi,
-  AccountApi,
-  StatusApi,
+  // AccountApi,
+  // StatusApi,
   GetRoutesRequest,
   Route,
   RoutesResponse,
-  GetTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { ethers } from "ethers";
 
 const logger = log.getLogger("do-swap");
 
 async function main() {
   const exchangeAPI = new ExchangeApi(apiConfig);
-  const accountAPI = new AccountApi(apiConfig);
-  const statusAPI = new StatusApi(apiConfig);
+  // const accountAPI = new AccountApi(apiConfig);
+  // const statusAPI = new StatusApi(apiConfig);
 
   const routeParameters: GetRoutesRequest = {
     fromChain: "10", // Optimism
@@ -45,9 +41,12 @@ async function main() {
     logger.info("Selected route:");
     logger.info(JSON.stringify(selectedRoute, null, 2));
 
-    
+    // For now, please make sure you have approval to the contract you want to interact with;
+    // We will add examples with the approval API when ready
+
+    /* 
     const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
-/*
+
     const approvalRequest: GetTokenApprovalRequest = {
       chainID: routeParameters.fromChain,
       accountAddress: routeParameters.fromAddress,
@@ -64,12 +63,18 @@ async function main() {
 
     logger.info("Sending transaction...");
 
-    */
+    
     const destination = approvalAddress;
-    const txPayload = selectedRoute.transactionRequest.data;
-    const signedPayload = await signMessage(txPayload);
-    const broadcastResult = await transact(signedPayload, destination);
+    logger.info("Destination address:", destination);
 
+    */
+
+    const txPayload = selectedRoute.transactionRequest.data;
+    logger.info("Tx payload to be signed and broadcast is ", txPayload)
+    // const signedPayload = await signMessage(logger, txPayload);
+    // const broadcastResult = await broadcastSignedMessage(logger, signedPayload);
+
+    /* 
     if (broadcastResult) {
       logger.info("Successfully broadcast signed data to Optimism");
       logger.debug("Broadcast result:", broadcastResult);
@@ -82,6 +87,7 @@ async function main() {
     } else {
       throw new Error("Failed to broadcast signed message");
     }
+      */ 
   } catch (error) {
     logger.error("Failed to sign and broadcast");
     logger.debug(error);
@@ -91,43 +97,3 @@ main().catch((err) => {
   logger.error("There was an error");
   logger.debug(err);
 });
-
-async function transact(signedMessage: string, recipientAddress: string) {
-  try {
-    const tx = {
-      to: recipientAddress,
-      data: signedMessage,
-    };
-
-    const feeData = await optimismProvider.getFeeData();
-    const gasPrice = feeData.gasPrice || ethers.parseUnits("50", "gwei");
-    const transactionResponse = await optimismWallet.sendTransaction({
-      ...tx,
-      gasLimit: "10000000",
-      gasPrice: gasPrice,
-    });
-
-    logger.info("Transaction sent. Waiting for confirmation...");
-    await transactionResponse.wait();
-    logger.info("Transaction confirmed.");
-    return transactionResponse;
-  } catch (error) {
-    logger.error("Error broadcasting signed message");
-    logger.debug("Error details:", error);
-    return null;
-  }
-}
-
-async function signMessage(data: string) {
-  try {
-    const signedMessage = await optimismWallet.signMessage(
-      JSON.stringify(data),
-    );
-    logger.info("Signed message:", signedMessage);
-    return signedMessage;
-  } catch (error) {
-    logger.error("Error signing message");
-    logger.debug(error);
-    throw error;
-  }
-}
