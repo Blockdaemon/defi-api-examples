@@ -13,7 +13,7 @@ async function main() {
   // get only eth and usdc token in eth mainnet
 
   const request: PriceRequest = {
-    chainID: "1",
+    chainID: "eip155:1",
     tokens: [
       "0x0000000000000000000000000000000000000000",
       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",

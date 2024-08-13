@@ -13,7 +13,6 @@ async function main() {
   try {
     const rawDataToSign = "hello world"; // data to sign, this can be a transaction payload or any data you want to sign
 
-
     const signedMessage = await signMessage(logger, rawDataToSign);
 
     // simple broadcast of signed message
@@ -29,7 +28,6 @@ async function main() {
       OPTIMISM_RPC,
     );
 
-  
     if (broadcastResult && anotherResult) {
       logger.info("Successfully broadcast signed data to Optimism");
       logger.debug("Broadcast result:", broadcastResult);
@@ -50,7 +48,6 @@ async function main() {
     } else {
       throw new Error("Failed to broadcast signed message");
     }
-      
   } catch (error) {
     logger.error("Failed to sign and broadcast");
     logger.debug(error);

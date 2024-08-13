@@ -12,15 +12,24 @@ async function main() {
   logger.info("Available tags");
   logger.info(JSON.stringify(tags, null, 2));
 
-  const tokensParameters: GetTokensRequest = {
+  const chainIDOP = "eip155:10";
+  const chainIDPolygon = "eip155:137";
+  const tokensParametersOP: GetTokensRequest = {
     tagLimit: ["stablecoin"],
-    chainID: "1",
+    chainID: chainIDOP,
+  };
+  const tokensParametersPol: GetTokensRequest = {
+    tagLimit: ["stablecoin"],
+    chainID: chainIDPolygon,
   };
 
   try {
-    const someTokens = await api.getTokens(tokensParameters);
-    logger.info("Got Ethereum Stablecoins");
+    const someTokens = await api.getTokens(tokensParametersOP);
+    logger.info(`Got ${chainIDOP} Stablecoins`);
     logger.info(JSON.stringify(someTokens, null, 2));
+    const someTokensPol = await api.getTokens(tokensParametersPol);
+    logger.info(`Got ${chainIDPolygon} Stablecoins`);
+    logger.info(JSON.stringify(someTokensPol, null, 2));
   } catch (error) {
     logger.error("Failed to get tokens");
     logger.debug(error);

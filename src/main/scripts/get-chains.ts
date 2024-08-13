@@ -10,10 +10,12 @@ async function main() {
 
   // get polygon; no parameters to get all chains
   const chainsParameters: GetChainsRequest = {
-    chainName: "polygon",
+    chainType: "evm",
   };
 
   try {
+    // chain IDs according to CAIP-2 standard https://eips.ethereum.org/EIPS/eip-155
+    // see list https://chainid.network/
     const chains = await api.getChains(chainsParameters);
     logger.info("Got chains");
     logger.info(JSON.stringify(chains, null, 2));

@@ -8,9 +8,10 @@ const logger = log.getLogger("get-tokens");
 async function main() {
   const api = new TokensApi(apiConfig);
 
-  // get all USDC token data
+  // get USDC token data from polygon
   const tokensParameters: GetTokensRequest = {
     tokenSymbol: "USDC",
+    chainID: "eip155:137",
   };
 
   try {
