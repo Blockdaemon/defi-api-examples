@@ -1,13 +1,14 @@
 import {
+  StatusApi,
   StatusEnum,
   StatusResponse,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { isBlockdaemonApiError } from "./error";
-import { log } from "./common";
+import { isBlockdaemonApiError } from "../utils/error";
+import { log } from "../utils/common";
 const logger = log.getLogger("utils-status");
 
 export async function checkTransactionStatus(
-  statusAPI: any,
+  statusAPI: StatusApi,
   fromChain: string,
   transactionHash: string,
 ): Promise<void> {

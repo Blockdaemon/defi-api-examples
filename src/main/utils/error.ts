@@ -10,7 +10,7 @@ interface BlockdaemonApiError {
 
 // Function to check if an error is a Blockdaemon API error
 export function isBlockdaemonApiError(
-  error: any,
+  error: unknown,
 ): error is BlockdaemonApiError {
   return (
     typeof error === "object" &&
@@ -37,7 +37,7 @@ export function logBlockdaemonApiError(
 }
 
 // Function to handle and log all error types
-export function handleAndLogError(logger: Logger, error: any): void {
+export function handleAndLogError(logger: Logger, error: unknown): void {
   logger.error("An error occurred");
 
   if (isBlockdaemonApiError(error)) {

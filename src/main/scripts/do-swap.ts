@@ -1,7 +1,4 @@
-import {
-  signAndBroadcastTransaction,
-  signTxObjectAndBroadcast,
-} from "../endpoints/wallet";
+import { signTxObjectAndBroadcast } from "../endpoints/wallet";
 import {
   log,
   polygonWallet,
@@ -17,10 +14,10 @@ import {
   GetRoutesRequest,
   Route,
   RoutesResponse,
-  ModifyTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleAndLogError } from "../utils/error";
-import { checkTransactionStatus } from "../utils/status";
+import { checkTransactionStatus } from "../endpoints/status";
+import { handleApproval } from "../endpoints/approval";
 
 const logger = log.getLogger("do-swap");
 
@@ -69,57 +66,24 @@ async function main() {
     logger.info("Selected route:");
     logger.info(JSON.stringify(selectedRoute, null, 2));
 
-    // For now, please make sure you have approval to the contract you want to interact with;
-    // We will add examples with the approval API when ready
-
-    const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
-
-    const modifyApprovalRequest: ModifyTokenApprovalRequest = {
-      tokenApprovalModification: {
-        chainID: routeParameters.fromChain,
-        accountAddress: routeParameters.fromAddress,
-        tokenAddress: routeParameters.toToken,
-        spenderAddress: approvalAddress,
-        toApprovedAmount: routeParameters.fromAmount,
-      },
-    };
-
-    const approval = await accountAPI.modifyTokenApproval(
-      modifyApprovalRequest,
-    );
-    logger.info("Got approval transaction payload");
-    logger.info(JSON.stringify(approval, null, 2));
-
-    const approvalPayload = approval.transactionRequest.data;
-    const approvalGasLimit = approval.transactionRequest.gasLimit;
-
-    let result = await signAndBroadcastTransaction(
-      approvalPayload,
-      approvalAddress,
-      "0",
-      approvalGasLimit,
-      optimismWallet.privateKey,
+    // create approval to spend tokens in select bridge
+    const approvalTxHash = await handleApproval(
+      selectedRoute,
+      routeParameters,
+      accountAPI,
+      optimismWallet,
       OPTIMISM_RPC,
+      logger,
     );
-    logger.info("Got approval");
-    logger.info(JSON.stringify(result, null, 2));
 
-    const approvalTxHash = result?.transactionHash;
-    if (!approvalTxHash) {
-      throw new Error("Failed to get approval transaction hash");
-    }
-
+    // check the status of the approval transaction
     await checkTransactionStatus(
       statusAPI,
       routeParameters.fromChain,
       approvalTxHash.toString(),
     );
 
-    logger.info("Sending transaction...");
-
-    const destination = approvalAddress;
-    logger.info("Destination address:", destination);
-
+    logger.info("Sending bridging transaction...");
     let txPayload = selectedRoute.transactionRequest.data;
 
     // Check if the payload starts with '0x', if not, add it
@@ -144,7 +108,6 @@ async function main() {
       );
 
       // we can double check that the bridging was done correctly with the status api
-
       await checkTransactionStatus(
         statusAPI,
         routeParameters.fromChain,

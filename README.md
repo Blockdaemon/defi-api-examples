@@ -21,9 +21,11 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 
 6. Run the scripts with `npx ts-node src/main/scripts/SCRIPT.ts`, where `SCRIPT` can be:
 
-* `get-tokens` (gets the list of supported tokens)
-* `get-prices`(gets token prices from a wide range of blockchains in USD or EUR)
+* `do-swap` (performs a cross-chain token transfer from sender to receiver based on the first received route); 
+* `get-approvals` (gets the status of an approval)
 * `get-chains`(gets the list of supported chains)
-* `sign-and-broadcast-transaction` (sends 0.0001 ETH to yourself on OP)
+* `get-prices`(gets token prices from a wide range of blockchains) 
 * `get-routes` (gets a set of routes that satisfy a swap); 
-* `do-swap (TBD)` (performs a cross-chain token transfer from sender to receiver based on the first received route); 
+* `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
+* `get-tokens` (gets the list of supported tokens)
+* `sign-and-broadcast-transaction` (signs and broadcasts a transaction to the blockchain)
