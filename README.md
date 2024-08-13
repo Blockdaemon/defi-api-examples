@@ -1,6 +1,6 @@
 # defi-api-examples
 
-This tool is a simple example app that leverages BD's DEFI API.
+This repository comprise a set of scripts that leverages BD's DEFI API. The script collection guides the creation of an application that leverages the DEFI API and has cross-chain token transfer capabilities.
 
 ### Requirements
 This is a Typescript project. Npm as package manager and node. Tested with npm v10.2.4, node 21.5.0. We recommend using [nvm](https://github.com/nvm-sh/nvm) for node version management.
@@ -28,4 +28,12 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 * `get-routes` (gets a set of routes that satisfy a swap); 
 * `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
 * `get-tokens` (gets the list of supported tokens)
-* `sign-and-broadcast-transaction` (signs and broadcasts a transaction to the blockchain)
+* `sign-and-broadcast-transaction` (signs and broadcasts a transaction to the blockchain).
+
+### Common issues and Troubleshooting
+For issues related to the code in this repository, please use the [issues tracker](https://github.com/Blockdaemon/defi-api-examples/issues). 
+
+### 👋 Need Further Help?
+
+Contact us through [email](support@blockdaemon.com) or our [support page](https://www.blockdaemon.com/support) for any issues, bugs, or assistance you may need.
+

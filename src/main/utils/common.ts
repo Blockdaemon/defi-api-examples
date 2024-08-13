@@ -18,6 +18,9 @@ export const log: log4js.Log4js = log4js.configure({
   },
 });
 
+const DEFI_API_BASE_PATH =
+  process.env.DEFI_API_BASE_PATH || "https://svc.blockdaemon.com/defi";
+
 export const API_KEY: string =
   process.env.BLOCKDAEMON_API_KEY ||
   (() => {
@@ -58,7 +61,7 @@ export const polygonWallet = Wallet.fromPhrase(mnemonic, polygonProvider);
 export const optimismWallet = Wallet.fromPhrase(mnemonic, optimismProvider);
 
 export const apiConfig = new Configuration({
-  basePath: "https://svc.blockdaemon.com/defi",
+  basePath: DEFI_API_BASE_PATH,
   headers: {
     authorization: `Bearer ${process.env.BLOCKDAEMON_API_KEY}`,
   },

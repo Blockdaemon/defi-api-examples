@@ -10,10 +10,10 @@ async function main() {
   const api = new ExchangeApi(apiConfig);
 
   const routeParameters: GetRoutesRequest = {
-    fromChain: "10", // Optimism
+    fromChain: "eip155:10", // Optimism
     fromToken: "0x7f5c764cbc14f9669b88837ca1490cca17c31607", // USDC.e
     fromAmount: "1000000",
-    toChain: "137", // Polygon
+    toChain: "eip:155137", // Polygon
     toToken: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f", // USDT
     fromAddress: polygonWallet.address,
     toAddress: optimismWallet.address,
