@@ -26,6 +26,7 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 * `get-chains`(gets the list of supported chains)
 * `get-prices`(gets token prices from a wide range of blockchains) 
 * `get-routes` (gets a set of routes that satisfy a swap); 
+* `get-status` (gets the status for a transaction); 
 * `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
 * `get-tokens` (gets the list of supported tokens)
 * `sign-and-broadcast-transaction` (signs and broadcasts a transaction to the blockchain).
