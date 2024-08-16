@@ -21,7 +21,7 @@ export async function handleApproval(
     tokenApprovalModification: {
       chainID: routeParameters.fromChain,
       accountAddress: routeParameters.fromAddress,
-      tokenAddress: routeParameters.fromToken, // Changed from toToken to fromToken
+      tokenAddress: routeParameters.fromToken,
       spenderAddress: approvalAddress,
       toApprovedAmount: routeParameters.fromAmount,
     },

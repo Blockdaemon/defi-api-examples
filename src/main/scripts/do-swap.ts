@@ -9,7 +9,7 @@ import {
 
 import {
   ExchangeApi,
-  AccountApi,
+  //AccountApi,
   StatusApi,
   GetRoutesRequest,
   Route,
@@ -17,13 +17,13 @@ import {
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleAndLogError } from "../utils/error";
 import { checkTransactionStatus } from "../endpoints/status";
-import { handleApproval } from "../endpoints/approval";
+// import { handleApproval } from "../endpoints/approval";
 
 const logger = log.getLogger("do-swap");
 
 async function main() {
   const exchangeAPI = new ExchangeApi(apiConfig);
-  const accountAPI = new AccountApi(apiConfig);
+  // const accountAPI = new AccountApi(apiConfig);
   const statusAPI = new StatusApi(apiConfig);
 
   const tokenUSDC = {
@@ -48,11 +48,11 @@ async function main() {
   };
 
   const routeParameters: GetRoutesRequest = {
-    fromChain: "eip155:10", // Optimism
-    fromToken: tokens["DAI"].fromToken,
-    fromAmount: tokens["DAI"].fromAmount,
-    toChain: "eip155:137", // Polygon
-    toToken: tokens["DAI"].toToken,
+    fromChain: "eip155:10",
+    fromToken: tokens["USDC"].fromToken,
+    fromAmount: tokens["USDC"].fromAmount,
+    toChain: "eip155:137",
+    toToken: tokens["USDC"].toToken,
     fromAddress: optimismWallet.address,
     toAddress: polygonWallet.address,
     slippage: 0.1,
@@ -66,6 +66,8 @@ async function main() {
     logger.info("Selected route:");
     logger.info(JSON.stringify(selectedRoute, null, 2));
 
+    // TODO re-add approvals
+    /*
     // create approval to spend tokens in select bridge
     const approvalTxHash = await handleApproval(
       selectedRoute,
@@ -82,14 +84,10 @@ async function main() {
       routeParameters.fromChain,
       approvalTxHash.toString(),
     );
+    */
 
     logger.info("Sending bridging transaction...");
     let txPayload = selectedRoute.transactionRequest.data;
-
-    // Check if the payload starts with '0x', if not, add it
-    if (!txPayload.startsWith("0x")) {
-      txPayload = "0x" + txPayload;
-    }
 
     logger.info("Tx payload to be signed and broadcast is ", txPayload);
     const broadcastResult = await signTxObjectAndBroadcast(

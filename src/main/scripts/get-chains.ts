@@ -10,7 +10,7 @@ async function main() {
 
   // get polygon; no parameters to get all chains
   const chainsParameters: GetChainsRequest = {
-    chainType: "evm",
+    chainID: "eip155:137",
   };
 
   try {

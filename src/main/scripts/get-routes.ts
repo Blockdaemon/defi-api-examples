@@ -10,16 +10,20 @@ async function main() {
   const api = new ExchangeApi(apiConfig);
 
   const routeParameters: GetRoutesRequest = {
-    fromChain: "eip155:10", // Optimism
-    fromToken: "0x7f5c764cbc14f9669b88837ca1490cca17c31607", // USDC.e
+    // OP
+    fromChain: "eip155:10",
+    // USDC
+    fromToken: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
     fromAmount: "1000000",
-    toChain: "eip:155137", // Polygon
-    toToken: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f", // USDT
-    fromAddress: polygonWallet.address,
-    toAddress: optimismWallet.address,
+    // Polygon
+    toChain: "eip155:137",
+    // USDC
+    toToken: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+    fromAddress: optimismWallet.address,
+    toAddress: polygonWallet.address,
     slippage: 0.1,
   };
-
+  
   try {
     const routes: RoutesResponse = await api.getRoutes(routeParameters);
     logger.info("Got routes");

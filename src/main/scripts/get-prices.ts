@@ -11,7 +11,7 @@ async function main() {
   const api = new PriceApi(apiConfig);
 
   // get only eth and usdc token in eth mainnet
-
+  // we can also use the TokensApi (api.getTokens(tokensParameters) to get tokens with name "ETH" and "USDC", and then populate their addresses in the object below
   const request: PriceRequest = {
     chainID: "eip155:1",
     tokens: [

@@ -11,13 +11,14 @@ async function main() {
 
   const routeParameters = {
     fromChain: "eip155:1",
-    fromAddress: "0x1234567890123456789012345678901234567890", // Example address
+    // example address, replace by yours
+    fromAddress: "0x1234567890123456789012345678901234567890",
+    // the target token you want to authorize
     toToken: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   };
 
-  // Example approval address
+  // address that gets authorization to spend your tokens
   const approvalAddress = "0x2222222222222222222222222222222222222222";
-
   const getApprovalRequest: GetTokenApprovalRequest = {
     chainID: routeParameters.fromChain,
     accountAddress: routeParameters.fromAddress,

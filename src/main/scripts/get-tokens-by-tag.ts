@@ -24,6 +24,9 @@ async function main() {
   };
 
   try {
+    const tags = await api.getTokenTags();
+    logger.info("Available tags");
+    logger.info(JSON.stringify(tags, null, 2));
     const someTokens = await api.getTokens(tokensParametersOP);
     logger.info(`Got ${chainIDOP} Stablecoins`);
     logger.info(JSON.stringify(someTokens, null, 2));

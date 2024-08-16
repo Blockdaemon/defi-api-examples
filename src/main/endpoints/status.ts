@@ -1,4 +1,5 @@
 import {
+  GetStatusRequest,
   StatusApi,
   StatusEnum,
   StatusResponse,
@@ -9,8 +10,7 @@ const logger = log.getLogger("utils-status");
 
 export async function checkTransactionStatus(
   statusAPI: StatusApi,
-  fromChain: string,
-  transactionHash: string,
+  request: GetStatusRequest,
 ): Promise<void> {
   let approvalStatus: StatusResponse = {
     status: StatusEnum.Pending,
@@ -18,9 +18,9 @@ export async function checkTransactionStatus(
 
   while (approvalStatus.status !== StatusEnum.Done) {
     approvalStatus = await statusAPI.getStatus({
-      fromChain: fromChain,
-      toChain: fromChain,
-      transactionID: transactionHash,
+      fromChain: request.fromChain,
+      toChain: request.toChain,
+      transactionID: request.transactionID,
     });
 
     if (
@@ -35,10 +35,12 @@ export async function checkTransactionStatus(
     }
 
     logger.info(`Current approval status: ${approvalStatus.status}`);
-
+    if (approvalStatus.status === StatusEnum.Done) {
+      break;
+    }
     // Sleep for 10 seconds before next check
     await new Promise((resolve) => setTimeout(resolve, 10000));
   }
 
-  logger.info("Approval transaction completed successfully");
+  logger.info("Status of transaction is DONE");
 }
