@@ -7,7 +7,10 @@ import {
   OPTIMISM_RPC,
 } from "../utils/common";
 import { signAndBroadcastTransaction } from "../endpoints/wallet";
-const logger = log.getLogger("sign and broadcast");
+import { handleApiError } from "../utils/error";
+
+const scriptName = "sign-and-broadcast";
+const logger = log.getLogger(scriptName);
 
 async function main() {
   try {
@@ -49,12 +52,13 @@ async function main() {
       throw new Error("Failed to broadcast signed message");
     }
   } catch (error) {
-    logger.error("Failed to sign and broadcast");
-    logger.debug(error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   logger.error("There was an error in the main function");
-  logger.debug(err);
+  await handleApiError(err, logger);
 });
+

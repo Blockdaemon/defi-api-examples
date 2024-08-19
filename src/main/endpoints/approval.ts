@@ -7,7 +7,7 @@ import { AccountApi } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { signAndBroadcastTransaction } from "../endpoints/wallet";
 import { Logger } from "log4js"; // Assuming you're using log4js for logging
 
-export async function handleApproval(
+export async function createApproval(
   selectedRoute: Route,
   routeParameters: GetRoutesRequest,
   accountAPI: AccountApi,

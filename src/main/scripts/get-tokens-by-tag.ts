@@ -3,8 +3,11 @@ import {
   TokensApi,
   GetTokensRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { handleApiError } from "../utils/error";
 
-const logger = log.getLogger("get-tokens");
+const scriptName = "get-tokens-by-tag";
+const logger = log.getLogger(scriptName);
+
 async function main() {
   const api = new TokensApi(apiConfig);
 
@@ -34,12 +37,12 @@ async function main() {
     logger.info(`Got ${chainIDPolygon} Stablecoins`);
     logger.info(JSON.stringify(someTokensPol, null, 2));
   } catch (error) {
-    logger.error("Failed to get tokens");
-    logger.debug(error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
 
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });

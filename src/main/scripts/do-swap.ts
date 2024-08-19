@@ -9,21 +9,23 @@ import {
 
 import {
   ExchangeApi,
-  //AccountApi,
+  AccountApi,
   StatusApi,
   GetRoutesRequest,
   Route,
   RoutesResponse,
+  GetStatusRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { handleAndLogError } from "../utils/error";
+import { handleApiError } from "../utils/error";
 import { checkTransactionStatus } from "../endpoints/status";
-// import { handleApproval } from "../endpoints/approval";
+import { createApproval } from "../endpoints/approval";
 
-const logger = log.getLogger("do-swap");
+const scriptName = "do-swap";
+const logger = log.getLogger(scriptName);
 
 async function main() {
   const exchangeAPI = new ExchangeApi(apiConfig);
-  // const accountAPI = new AccountApi(apiConfig);
+  const accountAPI = new AccountApi(apiConfig);
   const statusAPI = new StatusApi(apiConfig);
 
   const tokenUSDC = {
@@ -66,10 +68,8 @@ async function main() {
     logger.info("Selected route:");
     logger.info(JSON.stringify(selectedRoute, null, 2));
 
-    // TODO re-add approvals
-    /*
     // create approval to spend tokens in select bridge
-    const approvalTxHash = await handleApproval(
+    const approvalTxHash = await createApproval(
       selectedRoute,
       routeParameters,
       accountAPI,
@@ -78,13 +78,14 @@ async function main() {
       logger,
     );
 
+    let checkParams: GetStatusRequest = {
+      fromChain: routeParameters.fromChain,
+      toChain: routeParameters.toChain,
+      transactionID: approvalTxHash.toString(),
+    };
+
     // check the status of the approval transaction
-    await checkTransactionStatus(
-      statusAPI,
-      routeParameters.fromChain,
-      approvalTxHash.toString(),
-    );
-    */
+    await checkTransactionStatus(statusAPI, checkParams);
 
     logger.info("Sending bridging transaction...");
     let txPayload = selectedRoute.transactionRequest.data;
@@ -106,23 +107,24 @@ async function main() {
       );
 
       // we can double check that the bridging was done correctly with the status api
-      await checkTransactionStatus(
-        statusAPI,
-        routeParameters.fromChain,
-        broadcastResult.transactionHash.toString(),
-      );
+      checkParams = {
+        fromChain: routeParameters.fromChain,
+        toChain: routeParameters.toChain,
+        transactionID: broadcastResult.transactionHash.toString(),
+      };
+
+      await checkTransactionStatus(statusAPI, checkParams);
 
       logger.info("Transaction done with success. Please check your balances.");
     } else {
       throw new Error("Failed to broadcast signed message");
     }
   } catch (error) {
-    logger.error("Failed to sign and broadcast");
-    logger.debug(error);
-    handleAndLogError(logger, error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });

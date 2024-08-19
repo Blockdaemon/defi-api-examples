@@ -5,8 +5,11 @@ import {
   PriceRequest,
   CurrencyCode,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { handleApiError } from "../utils/error";
 
-const logger = log.getLogger("get-prices");
+const scriptName = "get-prices";
+const logger = log.getLogger(scriptName);
+
 async function main() {
   const api = new PriceApi(apiConfig);
 
@@ -30,12 +33,12 @@ async function main() {
     logger.info("Got prices");
     logger.info(JSON.stringify(prices, null, 2));
   } catch (error) {
-    logger.error("Failed to get prices");
-    logger.debug(error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
 
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });

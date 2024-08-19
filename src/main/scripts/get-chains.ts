@@ -3,8 +3,11 @@ import {
   ChainsApi,
   GetChainsRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { handleApiError } from "../utils/error";
 
-const logger = log.getLogger("get-chains");
+const scriptName = "get-chains";
+const logger = log.getLogger(scriptName);
+
 async function main() {
   const api = new ChainsApi(apiConfig);
 
@@ -20,12 +23,12 @@ async function main() {
     logger.info("Got chains");
     logger.info(JSON.stringify(chains, null, 2));
   } catch (error) {
-    logger.error("Failed to get chains");
-    logger.debug(error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
 
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });

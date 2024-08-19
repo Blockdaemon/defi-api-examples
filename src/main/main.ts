@@ -8,6 +8,7 @@ import {
   PriceApi,
   IntegrationsApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { handleApiError } from "./utils/error";
 
 const logger = log.getLogger("tool");
 
@@ -43,7 +44,7 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });

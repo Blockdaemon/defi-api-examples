@@ -3,8 +3,10 @@ import {
   AccountApi,
   GetTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { handleApiError } from "../utils/error";
 
-const logger = log.getLogger("get-token-approval");
+const scriptName = "get-token-approval";
+const logger = log.getLogger(scriptName);
 
 async function main() {
   const accountAPI = new AccountApi(apiConfig);
@@ -18,7 +20,7 @@ async function main() {
   };
 
   // address that gets authorization to spend your tokens
-  const approvalAddress = "0x2222222222222222222222222222222222222222";
+  const approvalAddress = "0xcE8CcA271Ebc0533920C83d39F417ED6A0abB7D0";
   const getApprovalRequest: GetTokenApprovalRequest = {
     chainID: routeParameters.fromChain,
     accountAddress: routeParameters.fromAddress,
@@ -31,12 +33,12 @@ async function main() {
     logger.info("Got approval");
     logger.info(JSON.stringify(approval, null, 2));
   } catch (error) {
-    logger.error("Failed to get token approval");
-    logger.debug(error);
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
   }
 }
 
-main().catch((err) => {
-  logger.error("There was an error");
-  logger.debug(err);
+main().catch(async (err) => {
+  logger.error("There was an error in the main function");
+  await handleApiError(err, logger);
 });
