@@ -1,4 +1,4 @@
-import { signTxObjectAndBroadcast } from "../endpoints/wallet";
+import { signAndBroadcastTransaction } from "../endpoints/wallet";
 import {
   log,
   polygonWallet,
@@ -15,10 +15,14 @@ import {
   Route,
   RoutesResponse,
   GetStatusRequest,
+  GetTokensRequest,
+  TokensApi,
+  Token,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 import { checkTransactionStatus } from "../endpoints/status";
-import { createApproval } from "../endpoints/approval";
+import { handleTokenApproval } from "../endpoints/approval";
+import { getTokenTransferAmount } from "../utils/token";
 
 const scriptName = "do-swap";
 const logger = log.getLogger(scriptName);
@@ -27,34 +31,54 @@ async function main() {
   const exchangeAPI = new ExchangeApi(apiConfig);
   const accountAPI = new AccountApi(apiConfig);
   const statusAPI = new StatusApi(apiConfig);
+  const tokensAPI = new TokensApi(apiConfig);
 
-  const tokenUSDC = {
-    // USDC on OP
-    fromToken: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
-    // USDC on Polygon
-    toToken: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
-    // 1 USDC, 6 decimals
-    fromAmount: "1000000",
-  };
+  let sourceToken: Token | undefined;
+  let targetToken: Token | undefined;
 
-  const tokenDAI = {
-    fromToken: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-    toToken: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-    // 1 DAI, 18 decimals
-    fromAmount: "1000000000000000000",
-  };
+  // how many tokens (e.g., 1, 2.5 USDC) you want to send
+  let amountToTransfer: string;
+  try {
+    // choose your source chain token
+    const tokensParametersOP: GetTokensRequest = {
+      tokenSymbol: "USDC",
+      chainID: "eip155:10",
+    };
 
-  const tokens = {
-    USDC: tokenUSDC,
-    DAI: tokenDAI,
-  };
+    // choose token you want to receive and in which chain
+    const tokensParametersPol: GetTokensRequest = {
+      tokenSymbol: "USDC",
+      chainID: "eip155:137",
+    };
+    const tokenListOP = await tokensAPI.getTokens(tokensParametersOP);
+    const tokenListPol = await tokensAPI.getTokens(tokensParametersPol);
+    sourceToken = tokenListOP["eip155:10"][0];
+    targetToken = tokenListPol["eip155:137"][0];
+  } catch (error) {
+    logger.error(`Failure at ${scriptName}`);
+    await handleApiError(error, logger);
+  }
 
+  if (!sourceToken || !targetToken) {
+    throw new Error("Could not find tokens");
+  }
+
+  // ! IMPORTANT: we calculate the amount with decimals below, but the amountToTransfer should be the integer amount of tokens
+  amountToTransfer = "1.0";
+  const amountToTransferUnits = getTokenTransferAmount(
+    amountToTransfer,
+    targetToken,
+  );
+
+  logger.info(
+    `Transferring amount ${amountToTransferUnits} ${sourceToken.symbol} (${amountToTransfer} ${sourceToken.symbol}) from ${optimismWallet.address} to ${polygonWallet.address}`,
+  );
   const routeParameters: GetRoutesRequest = {
     fromChain: "eip155:10",
-    fromToken: tokens["USDC"].fromToken,
-    fromAmount: tokens["USDC"].fromAmount,
+    fromToken: sourceToken.address,
+    fromAmount: amountToTransferUnits,
     toChain: "eip155:137",
-    toToken: tokens["USDC"].toToken,
+    toToken: targetToken.address,
     fromAddress: optimismWallet.address,
     toAddress: polygonWallet.address,
     slippage: 0.1,
@@ -62,14 +86,14 @@ async function main() {
 
   try {
     const routes: RoutesResponse = await exchangeAPI.getRoutes(routeParameters);
-    logger.info("Got routes");
+    logger.info("Got valid routes");
 
     const selectedRoute: Route = routes.routes[0];
-    logger.info("Selected route:");
-    logger.info(JSON.stringify(selectedRoute, null, 2));
+    logger.debug("Selected route:");
+    logger.debug(JSON.stringify(selectedRoute, null, 2));
 
     // create approval to spend tokens in select bridge
-    const approvalTxHash = await createApproval(
+    const approvalTxHash = await handleTokenApproval(
       selectedRoute,
       routeParameters,
       accountAPI,
@@ -78,21 +102,30 @@ async function main() {
       logger,
     );
 
-    let checkParams: GetStatusRequest = {
-      fromChain: routeParameters.fromChain,
-      toChain: routeParameters.toChain,
-      transactionID: approvalTxHash.toString(),
-    };
+    let checkParams: GetStatusRequest;
+    if (!approvalTxHash) {
+      logger.info("No need for new approval");
+    } else {
+      logger.info("Approval was needed. Checking for approval status...");
+      checkParams = {
+        fromChain: routeParameters.fromChain,
+        toChain: routeParameters.fromChain,
+        transactionID: approvalTxHash.toString(),
+      };
 
-    // check the status of the approval transaction
-    await checkTransactionStatus(statusAPI, checkParams);
+      // check the status of the approval transaction
+      await checkTransactionStatus(statusAPI, checkParams);
+    }
 
     logger.info("Sending bridging transaction...");
-    let txPayload = selectedRoute.transactionRequest.data;
+    let transactionRequest = selectedRoute.transactionRequest;
 
-    logger.info("Tx payload to be signed and broadcast is ", txPayload);
-    const broadcastResult = await signTxObjectAndBroadcast(
-      txPayload,
+    logger.debug(
+      "Tx payload to be signed and broadcast is ",
+      transactionRequest.data,
+    );
+    const broadcastResult = await signAndBroadcastTransaction(
+      transactionRequest,
       optimismWallet.privateKey,
       OPTIMISM_RPC,
     );
@@ -100,20 +133,23 @@ async function main() {
     if (broadcastResult) {
       logger.info("Successfully broadcast signed data to Optimism");
       logger.debug("Broadcast result:", broadcastResult);
-      logger.info("Transaction hash:", broadcastResult.transactionHash);
+      logger.info("Transaction hash:", broadcastResult.hash);
       logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
-          broadcastResult.transactionHash,
+          broadcastResult.hash,
       );
 
       // we can double check that the bridging was done correctly with the status api
+      // TO BE MADE AVAILABLE
+      /*
       checkParams = {
         fromChain: routeParameters.fromChain,
         toChain: routeParameters.toChain,
-        transactionID: broadcastResult.transactionHash.toString(),
+        transactionID: broadcastResult.hash.toString(),
       };
 
       await checkTransactionStatus(statusAPI, checkParams);
+      */
 
       logger.info("Transaction done with success. Please check your balances.");
     } else {
