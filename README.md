@@ -29,6 +29,7 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 * `get-status` (gets the status for a transaction); 
 * `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
 * `get-tokens` (gets the list of supported tokens)
+* `make-approvals` (creates a spend approval for an ERC20 token)
 * `sign-and-broadcast-transaction` (signs and broadcasts a transaction to the blockchain).
 
 ### Common issues and Troubleshooting
