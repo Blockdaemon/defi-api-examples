@@ -17,11 +17,11 @@ async function main() {
   };
 
   try {
-    // chain IDs according to CAIP-2 standard https://eips.ethereum.org/EIPS/eip-155
+    // chain IDs according to CAIP-2 standard https://eips.ethereum.org/EIPS/eip-155 - pick your chain ID and prepend "eip155:"
     // see list https://chainid.network/
     const chains = await api.getChains(chainsParameters);
     logger.info("Got chains");
-    logger.info(JSON.stringify(chains, null, 2));
+    logger.debug(JSON.stringify(chains, null, 2));
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);

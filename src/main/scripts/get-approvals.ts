@@ -31,7 +31,7 @@ async function main() {
   try {
     const approval = await accountAPI.getTokenApproval(getApprovalRequest);
     logger.info("Got approval");
-    logger.info(JSON.stringify(approval, null, 2));
+    logger.debug(JSON.stringify(approval, null, 2));
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);

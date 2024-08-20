@@ -17,25 +17,25 @@ async function main() {
   try {
     const exchange = new ExchangeApi(apiConfig);
     logger.info("Initialized Exchange API");
-    logger.info(exchange.getRoutes.toString());
+    logger.debug(exchange.getRoutes.toString());
     const chains = new ChainsApi(apiConfig);
     logger.info("Initialized Chains API");
-    logger.info(chains.getChains.toString());
+    logger.debug(chains.getChains.toString());
     const accounts = new AccountApi(apiConfig);
     logger.info("Initialized Account API");
-    logger.info(accounts.getTokenApproval.toString());
+    logger.debug(accounts.getTokenApproval.toString());
     const tokens = new TokensApi(apiConfig);
     logger.info("Initialized Tokens API");
-    logger.info(tokens.getTokens.toString());
+    logger.debug(tokens.getTokens.toString());
     const status = new StatusApi(apiConfig);
     logger.info("Initialized Status API");
-    logger.info(status.getStatus.toString());
+    logger.debug(status.getStatus.toString());
     const price = new PriceApi(apiConfig);
     logger.info("Initialized Price API");
-    logger.info(price.getPrice.toString());
+    logger.debug(price.getPrice.toString());
     const integrations = new IntegrationsApi(apiConfig);
     logger.info("Initialized Integrations API");
-    logger.info(integrations.getIntegrations.toString());
+    logger.debug(integrations.getIntegrations.toString());
 
     logger.info("APIs initialized successfully");
   } catch (e) {

@@ -20,7 +20,7 @@ async function main() {
   try {
     const someTokens = await api.getTokens(tokensParameters);
     logger.info("Got USDC tokens");
-    logger.info(JSON.stringify(someTokens, null, 2));
+    logger.debug(JSON.stringify(someTokens, null, 2));
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);

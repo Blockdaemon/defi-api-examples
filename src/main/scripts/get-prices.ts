@@ -31,7 +31,7 @@ async function main() {
   try {
     const prices = await api.getPrice(priceParameters);
     logger.info("Got prices");
-    logger.info(JSON.stringify(prices, null, 2));
+    logger.debug(JSON.stringify(prices, null, 2));
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);

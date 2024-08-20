@@ -29,7 +29,7 @@ async function main() {
 
     const status = await statusAPI.getStatus(statusParams);
     logger.info("Got status");
-    logger.info(JSON.stringify(status, null, 2));
+    logger.debug(JSON.stringify(status, null, 2));
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);

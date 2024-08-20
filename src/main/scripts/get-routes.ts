@@ -31,14 +31,13 @@ async function main() {
     const routes: RoutesResponse = await api.getRoutes(routeParameters);
     logger.info("Got routes");
     if (routes.routes.length > 0) {
-      logger.info("Printing first route:");
-      logger.info(JSON.stringify(routes.routes[0], null, 2));
+      logger.debug(JSON.stringify(routes.routes[0], null, 2));
     } else {
       logger.warn("Routes returned but empty object");
     }
   } catch (error) {
-      logger.error("Failed to get routes");
-      await handleApiError(error, logger);
+    logger.error("Failed to get routes");
+    await handleApiError(error, logger);
   }
 }
 
@@ -46,4 +45,3 @@ main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
 });
-

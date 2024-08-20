@@ -1,12 +1,5 @@
-import {
-  log,
-  signMessage,
-  broadcastSignedMessage,
-  RECEIVER_ADDRESS,
-  optimismWallet,
-  OPTIMISM_RPC,
-} from "../utils/common";
-import { signAndBroadcastTransaction } from "../endpoints/wallet";
+import { Logger } from "log4js";
+import { log, optimismWallet, RECEIVER_ADDRESS } from "../utils/common";
 import { handleApiError } from "../utils/error";
 
 const scriptName = "sign-and-broadcast";
@@ -21,32 +14,13 @@ async function main() {
     // simple broadcast of signed message
     const broadcastResult = await broadcastSignedMessage(logger, signedMessage);
 
-    // another method of signing and broadcasting
-    const anotherResult = await signAndBroadcastTransaction(
-      rawDataToSign,
-      RECEIVER_ADDRESS,
-      "0",
-      undefined,
-      optimismWallet.privateKey,
-      OPTIMISM_RPC,
-    );
-
-    if (broadcastResult && anotherResult) {
+    if (broadcastResult) {
       logger.info("Successfully broadcast signed data to Optimism");
       logger.debug("Broadcast result:", broadcastResult);
       logger.info("Transaction hash:", broadcastResult.hash);
       logger.info(
         "Check transaction at: https://optimistic.etherscan.io/tx/" +
           broadcastResult.hash,
-      );
-
-      logger.info(
-        "Result from another method of signing and broadcasting:",
-        anotherResult,
-      );
-      logger.info(
-        "Check transaction at: https://optimistic.etherscan.io/tx/" +
-          anotherResult.transactionHash,
       );
     } else {
       throw new Error("Failed to broadcast signed message");
@@ -62,3 +36,37 @@ main().catch(async (err) => {
   await handleApiError(err, logger);
 });
 
+export async function signMessage(log: Logger, data: string) {
+  try {
+    const signedMessage = await optimismWallet.signMessage(
+      JSON.stringify(data),
+    );
+    log.info("Signed message:", signedMessage);
+    return signedMessage;
+  } catch (error) {
+    log.error("Error signing message");
+    log.debug(error);
+    throw error;
+  }
+}
+
+export async function broadcastSignedMessage(
+  log: Logger,
+  signedMessage: string,
+) {
+  try {
+    const tx = {
+      to: RECEIVER_ADDRESS,
+      data: signedMessage,
+      value: "0",
+    };
+
+    const transactionResponse = await optimismWallet.sendTransaction(tx);
+    await transactionResponse.wait();
+    return transactionResponse;
+  } catch (error) {
+    log.error("Error broadcasting signed message");
+    log.debug(error);
+    return null;
+  }
+}

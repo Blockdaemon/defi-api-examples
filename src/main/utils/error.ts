@@ -17,7 +17,10 @@ interface SdkErrorResponse {
   name: string;
 }
 
-export async function handleApiError(error: unknown, logger: Logger): Promise<void> {
+export async function handleApiError(
+  error: unknown,
+  logger: Logger,
+): Promise<void> {
   if (isSdkErrorResponse(error)) {
     logger.error(`API Error: ${error.name}`);
     logger.error(
@@ -48,7 +51,7 @@ export async function handleApiError(error: unknown, logger: Logger): Promise<vo
   }
 }
 
-function isSdkErrorResponse(error: unknown): error is SdkErrorResponse {
+export function isSdkErrorResponse(error: unknown): error is SdkErrorResponse {
   return (
     typeof error === "object" &&
     error !== null &&

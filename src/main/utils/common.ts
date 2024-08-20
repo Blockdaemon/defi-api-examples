@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import log4js, { Logger } from "log4js";
+import log4js from "log4js";
 import { Wallet, JsonRpcProvider } from "ethers";
 import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
@@ -66,38 +66,3 @@ export const apiConfig = new Configuration({
     authorization: `Bearer ${process.env.BLOCKDAEMON_API_KEY}`,
   },
 });
-
-export async function signMessage(log: Logger, data: string) {
-  try {
-    const signedMessage = await optimismWallet.signMessage(
-      JSON.stringify(data),
-    );
-    log.info("Signed message:", signedMessage);
-    return signedMessage;
-  } catch (error) {
-    log.error("Error signing message");
-    log.debug(error);
-    throw error;
-  }
-}
-
-export async function broadcastSignedMessage(
-  log: Logger,
-  signedMessage: string,
-) {
-  try {
-    const tx = {
-      to: RECEIVER_ADDRESS,
-      data: signedMessage,
-      value: "0",
-    };
-
-    const transactionResponse = await optimismWallet.sendTransaction(tx);
-    await transactionResponse.wait();
-    return transactionResponse;
-  } catch (error) {
-    log.error("Error broadcasting signed message");
-    log.debug(error);
-    return null;
-  }
-}

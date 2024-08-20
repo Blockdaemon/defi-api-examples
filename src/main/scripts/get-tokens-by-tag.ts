@@ -13,7 +13,7 @@ async function main() {
 
   const tags = await api.getTokenTags();
   logger.info("Available tags");
-  logger.info(JSON.stringify(tags, null, 2));
+  logger.debug(JSON.stringify(tags, null, 2));
 
   const chainIDOP = "eip155:10";
   const chainIDPolygon = "eip155:137";
