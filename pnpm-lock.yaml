@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@blockdaemon/blockdaemon-defi-api-typescript-fetch':
-        specifier: '1.22'
-        version: 1.22.0
+        specifier: 1.35.1
+        version: 1.35.1
       dotenv:
         specifier: 16.3.1
         version: 16.3.1
@@ -66,8 +66,8 @@ packages:
   '@adraffy/ens-normalize@1.11.0':
     resolution: {integrity: sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg==}
 
-  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.22.0':
-    resolution: {integrity: sha512-lfUCPJCgFKO9sElCeWJBLvlNyRu570aRP6HsXrhG3PDLBOeyCidqq93evIZCmYHpn58tJUkJhJ+NY1/C8nvAGw==}
+  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.35.1':
+    resolution: {integrity: sha512-RHkcKhXFbFMfspkGIuUNKIYbzf29VitIVDUwWTrT3ODoPM6/X8JFTIBXe/H8OKtDieikFSU3+vy0UmNgG7SbVg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1560,7 +1560,7 @@ snapshots:
 
   '@adraffy/ens-normalize@1.11.0': {}
 
-  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.22.0': {}
+  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.35.1': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
