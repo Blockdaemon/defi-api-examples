@@ -1,7 +1,8 @@
 import { log, apiConfig } from "../utils/common";
 import {
-  AccountApi,
-  GetTokenApprovalRequest,
+  ApprovalsApi,
+  type GetAllApprovalsRequest,
+  type GetTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 
@@ -9,12 +10,12 @@ const scriptName = "get-token-approval";
 const logger = log.getLogger(scriptName);
 
 async function main() {
-  const accountAPI = new AccountApi(apiConfig);
+  const approvalsAPI = new ApprovalsApi(apiConfig);
 
   const routeParameters = {
     fromChain: "eip155:1",
     // example address, replace by yours
-    fromAddress: "0x1234567890123456789012345678901234567890",
+    fromAddress: "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
     // the target token you want to authorize
     toToken: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   };
@@ -28,17 +29,30 @@ async function main() {
     spenderAddress: approvalAddress,
   };
 
+  const getAllApprovalsRequest: GetAllApprovalsRequest = {
+    chainIDs: [routeParameters.fromChain],
+    accountAddresses: [routeParameters.fromAddress],
+  };
   try {
-    const approval = await accountAPI.getTokenApproval(getApprovalRequest);
+    // get one approval
+    const approval = await approvalsAPI.getTokenApproval(getApprovalRequest);
     logger.info("Got approval");
     logger.debug(JSON.stringify(approval, null, 2));
+    const allApprovals = await approvalsAPI.getAllApprovals(
+      getAllApprovalsRequest,
+    );
+    logger.info("Got all approvals");
+    logger.debug(JSON.stringify(allApprovals, null, 2));
+    process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);
+    process.exit(1);
   }
 }
 
 main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
+  process.exit(1);
 });

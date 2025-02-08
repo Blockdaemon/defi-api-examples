@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import log4js from "log4js";
-import { Wallet, JsonRpcProvider } from "ethers";
+import { Wallet, JsonRpcProvider, type HDNodeWallet } from "ethers";
 import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
 dotenv.config();
@@ -28,16 +28,6 @@ export const API_KEY: string =
     throw new Error("BLOCKDAEMON_API_KEY is not defined");
   })();
 
-export const SENDER_ADDRESS: string =
-  process.env.SENDER_ADDRESS ||
-  (() => {
-    console.log("SENDER_ADDRESS is not defined");
-    throw new Error("SENDER_ADDRESS is not defined");
-  })();
-
-export const RECEIVER_ADDRESS: string =
-  process.env.RECEIVER_ADDRESS || SENDER_ADDRESS;
-
 export const POLYGON_RPC =
   "https://svc.blockdaemon.com/polygon/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
     "YOUR_API_KEY",
@@ -57,6 +47,18 @@ if (!mnemonic) {
   throw new Error("MNEMONIC is not defined");
 }
 
+const senderAddressFromMmemonic = Wallet.fromPhrase(mnemonic).address;
+
+export const SENDER_ADDRESS: string =
+  senderAddressFromMmemonic ||
+  (() => {
+    console.log("SENDER_ADDRESS is not defined");
+    throw new Error("SENDER_ADDRESS is not defined");
+  })();
+
+export const RECEIVER_ADDRESS: string =
+  process.env.RECEIVER_ADDRESS || SENDER_ADDRESS;
+
 export const polygonWallet = Wallet.fromPhrase(mnemonic, polygonProvider);
 export const optimismWallet = Wallet.fromPhrase(mnemonic, optimismProvider);
 
@@ -66,3 +68,14 @@ export const apiConfig = new Configuration({
     authorization: `Bearer ${process.env.BLOCKDAEMON_API_KEY}`,
   },
 });
+
+export function getWallet(name: string): HDNodeWallet {
+  switch (name.toLowerCase()) {
+    case "polygon":
+      return polygonWallet;
+    case "optimism":
+      return optimismWallet;
+    default:
+      throw new Error(`Wallet ${name} not found`);
+  }
+}

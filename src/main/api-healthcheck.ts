@@ -2,11 +2,9 @@ import { log, apiConfig } from "./utils/common";
 import {
   ExchangeApi,
   ChainsApi,
-  AccountApi,
+  ApprovalsApi,
   TokensApi,
   StatusApi,
-  PriceApi,
-  IntegrationsApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "./utils/error";
 
@@ -21,7 +19,7 @@ async function main() {
     const chains = new ChainsApi(apiConfig);
     logger.info("Initialized Chains API");
     logger.debug(chains.getChains.toString());
-    const accounts = new AccountApi(apiConfig);
+    const accounts = new ApprovalsApi(apiConfig);
     logger.info("Initialized Account API");
     logger.debug(accounts.getTokenApproval.toString());
     const tokens = new TokensApi(apiConfig);
@@ -30,21 +28,18 @@ async function main() {
     const status = new StatusApi(apiConfig);
     logger.info("Initialized Status API");
     logger.debug(status.getStatus.toString());
-    const price = new PriceApi(apiConfig);
-    logger.info("Initialized Price API");
-    logger.debug(price.getPrice.toString());
-    const integrations = new IntegrationsApi(apiConfig);
-    logger.info("Initialized Integrations API");
-    logger.debug(integrations.getIntegrations.toString());
 
     logger.info("APIs initialized successfully");
+    process.exit(0);
   } catch (e) {
     logger.error("Failed to initialize API");
     logger.debug(e);
+    process.exit(1);
   }
 }
 
 main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
+  process.exit(1);
 });

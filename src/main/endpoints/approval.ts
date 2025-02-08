@@ -1,26 +1,38 @@
-import {
+import type {
   ModifyTokenApprovalRequest,
   Route,
   GetRoutesRequest,
   GetTokenApprovalRequest,
   TokenApprovalData,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { AccountApi } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import type { ApprovalsApi } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { signAndBroadcastTransaction } from "../endpoints/wallet";
-import { Logger } from "log4js"; // Assuming you're using log4js for logging
+import type { Logger } from "log4js";
 import { handleApiError } from "../utils/error";
 
+/**
+ * Handles the token approval process necessary for a cross-chain transaction.
+ * Checks for existing token approvals and creates a new one if necessary.
+ *
+ * @param selectedRoute - The selected route for the cross-chain transaction
+ * @param routeParameters - Parameters defining the route including chain IDs and amounts
+ * @param approvalsAPI - The account API instance for interacting with the blockchain
+ * @param wallet - Object containing the wallet address and private key
+ * @param rpcUrl - The RPC URL for the blockchain network
+ * @param logger - Logger instance for tracking execution
+ * @returns Promise resolving to the approval transaction hash or null if no approval needed
+ * @throws Error if approval transaction fails
+ */
 export async function handleTokenApproval(
   selectedRoute: Route,
   routeParameters: GetRoutesRequest,
-  accountAPI: AccountApi,
+  approvalsAPI: ApprovalsApi,
   wallet: { address: string; privateKey: string },
   rpcUrl: string,
   logger: Logger,
 ): Promise<string | null> {
   const approvalAddress = selectedRoute.steps[0].estimate.approvalAddress;
 
-  // Check if we already have the approval to spend tokens in the selected bridge
   const getApprovalRequest: GetTokenApprovalRequest = {
     chainID: routeParameters.fromChain,
     accountAddress: routeParameters.fromAddress,
@@ -30,31 +42,24 @@ export async function handleTokenApproval(
 
   try {
     const existingApproval: TokenApprovalData =
-      await accountAPI.getTokenApproval(getApprovalRequest);
+      await approvalsAPI.getTokenApproval(getApprovalRequest);
     logger.info("Got existing approval");
     logger.info(JSON.stringify(existingApproval, null, 2));
 
-    // Check if the existing approval is sufficient
-    if (
-      BigInt(existingApproval.approvedAmount) >=
-      BigInt(routeParameters.fromAmount)
-    ) {
+    if (BigInt(existingApproval.amount) >= BigInt(routeParameters.fromAmount)) {
       logger.info(
         "Sufficient approval already exists. No need for new approval.",
       );
       return null;
-    } else {
-      logger.info(
-        "Existing approval is not sufficient. Fetching require transaction to spend funds...",
-      );
     }
+    logger.info(
+      "Existing approval is not sufficient. Fetching require transaction to spend funds...",
+    );
   } catch (error) {
     logger.warn("Error checking for existing approval:", error);
     handleApiError(error, logger);
-    // Continue with the process even if checking for approval fails
   }
 
-  // If we're here, we need to create a new approval
   const modifyApprovalRequest: ModifyTokenApprovalRequest = {
     tokenApprovalModification: {
       chainID: routeParameters.fromChain,
@@ -66,7 +71,7 @@ export async function handleTokenApproval(
   };
 
   try {
-    const approval = await accountAPI.modifyTokenApproval(
+    const approval = await approvalsAPI.modifyTokenApproval(
       modifyApprovalRequest,
     );
     logger.info("Got approval transaction payload");

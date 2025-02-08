@@ -1,11 +1,11 @@
 import {
   JsonRpcProvider,
-  TransactionResponse,
+  type TransactionResponse,
   Wallet,
   parseUnits,
 } from "ethers";
 import { log } from "../utils/common";
-import { TransactionRequest } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import type { TransactionRequest } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 
 const logger = log.getLogger("wallet");
 
@@ -34,7 +34,7 @@ export async function signAndBroadcastTransaction(
   };
 
   if (data && !data.startsWith("0x")) {
-    txObject.data = "0x" + data;
+    txObject.data = `0x${data}`;
   }
 
   try {

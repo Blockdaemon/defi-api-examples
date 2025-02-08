@@ -1,26 +1,25 @@
 import { log, apiConfig } from "../utils/common";
 import {
-  TokensApi,
-  type GetTokensRequest,
+  BalancesApi,
+  type GetBalancesRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 
-const scriptName = "get-tokens";
+const scriptName = "get-balances";
 const logger = log.getLogger(scriptName);
 
 async function main() {
-  const api = new TokensApi(apiConfig);
+  const balancesAPI = new BalancesApi(apiConfig);
 
-  // get USDC token data from polygon
-  const tokensParameters: GetTokensRequest = {
-    tokenSymbol: "USDC",
-    chainID: "eip155:137",
+  const balanceRequest: GetBalancesRequest = {
+    accountAddress: "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
+    chainIDs: ["eip155:1"], // Ethereum mainnet
   };
 
   try {
-    const someTokens = await api.getTokens(tokensParameters);
-    logger.info("Got USDC tokens");
-    logger.debug(JSON.stringify(someTokens, null, 2));
+    const balances = await balancesAPI.getBalances(balanceRequest);
+    logger.info("Got balances successfully");
+    logger.debug(JSON.stringify(balances, null, 2));
     process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);

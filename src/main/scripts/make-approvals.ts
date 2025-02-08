@@ -1,7 +1,7 @@
 import { log, apiConfig } from "../utils/common";
 import {
-  AccountApi,
-  ModifyTokenApprovalRequest,
+  ApprovalsApi,
+  type ModifyTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 
@@ -9,7 +9,7 @@ const scriptName = "make-token-approval";
 const logger = log.getLogger(scriptName);
 
 async function main() {
-  const accountAPI = new AccountApi(apiConfig);
+  const accountAPI = new ApprovalsApi(apiConfig);
 
   const approvalMock: ModifyTokenApprovalRequest = {
     tokenApprovalModification: {
@@ -25,13 +25,16 @@ async function main() {
     const approval = await accountAPI.modifyTokenApproval(approvalMock);
     logger.info("Got approval");
     logger.debug(JSON.stringify(approval, null, 2));
+    process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);
+    process.exit(1);
   }
 }
 
 main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
+  process.exit(1);
 });

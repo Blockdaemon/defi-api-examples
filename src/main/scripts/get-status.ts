@@ -1,7 +1,7 @@
 import { checkTransactionStatus } from "../endpoints/status";
 import { log, apiConfig } from "../utils/common";
 import {
-  GetStatusRequest,
+  type GetStatusRequest,
   StatusApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
@@ -30,13 +30,16 @@ async function main() {
     const status = await statusAPI.getStatus(statusParams);
     logger.info("Got status");
     logger.debug(JSON.stringify(status, null, 2));
+    process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);
+    process.exit(1);
   }
 }
 
 main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
+  process.exit(1);
 });

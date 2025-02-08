@@ -1,7 +1,7 @@
-import { Token } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import type { Token } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { parseUnits } from "ethers";
 
-export function getTokenTransferAmount(
+export function tokenUnitsToDecimals(
   amount: string | number,
   token: Token,
 ): string {

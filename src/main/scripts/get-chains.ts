@@ -1,7 +1,7 @@
 import { log, apiConfig } from "../utils/common";
 import {
   ChainsApi,
-  GetChainsRequest,
+  type GetChainsRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 
@@ -22,13 +22,16 @@ async function main() {
     const chains = await api.getChains(chainsParameters);
     logger.info("Got chains");
     logger.debug(JSON.stringify(chains, null, 2));
+    process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);
     await handleApiError(error, logger);
+    process.exit(1);
   }
 }
 
 main().catch(async (err) => {
   logger.error("There was an error in the main function");
   await handleApiError(err, logger);
+  process.exit(1);
 });

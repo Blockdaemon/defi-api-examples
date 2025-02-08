@@ -1,4 +1,4 @@
-import { Logger } from "log4js";
+import type { Logger } from "log4js";
 
 interface ApiError {
   status: number;
@@ -51,15 +51,22 @@ export async function handleApiError(
   }
 }
 
+interface DEFIAPIError {
+  response: {
+    json: unknown;
+  };
+  name: unknown;
+}
+
 export function isSdkErrorResponse(error: unknown): error is SdkErrorResponse {
   return (
     typeof error === "object" &&
     error !== null &&
     "response" in error &&
-    typeof (error as any).response === "object" &&
+    typeof (error as DEFIAPIError).response === "object" &&
     "name" in error &&
-    typeof (error as any).name === "string" &&
-    "json" in (error as any).response &&
-    typeof (error as any).response.json === "function"
+    typeof (error as DEFIAPIError).name === "string" &&
+    "json" in (error as DEFIAPIError).response &&
+    typeof (error as DEFIAPIError).response.json === "function"
   );
 }
