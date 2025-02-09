@@ -2,7 +2,6 @@ import { rebalanceConfig } from "./rebalance-config";
 import { RebalanceJobManager } from "./rebalance-job-manager";
 import {
   ExchangeApi,
-  StatusApi,
   ApprovalsApi,
   BalancesApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
@@ -14,7 +13,6 @@ async function main() {
   const jobManager = new RebalanceJobManager(
     rebalanceConfig,
     new ExchangeApi(apiConfig),
-    new StatusApi(apiConfig),
     new ApprovalsApi(apiConfig),
     new BalancesApi(apiConfig),
   );
