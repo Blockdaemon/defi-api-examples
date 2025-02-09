@@ -7,7 +7,7 @@ import type {
   BalancesApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { log } from "../../utils/common";
-import { tokenApprovalConfig, type RebalanceConfig } from "./rebalance-config";
+import { walletApprovalConfig, type RebalanceConfig } from "./rebalance-config";
 import { getRoutes, executeSwap } from "../../endpoints/routes";
 import { handleTokenApproval } from "../../endpoints/approval";
 import { checkTransactionStatus } from "../../endpoints/status";
@@ -202,7 +202,7 @@ export class RebalanceJobManager {
       job.status = JobStatus.CHECKING_APPROVAL;
 
       const walletConfig =
-        tokenApprovalConfig[
+        walletApprovalConfig[
           routeParameters.fromChain === "optimism" ? "optimism" : "polygon"
         ];
 
