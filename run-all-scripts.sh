@@ -23,3 +23,9 @@ echo -e "\nFailed scripts:"
 for f in "${failed[@]}"; do
   echo " - $f"
 done
+
+if [ ${#failed[@]} -eq 0 ]; then
+  exit 0
+else
+  exit 1
+fi
