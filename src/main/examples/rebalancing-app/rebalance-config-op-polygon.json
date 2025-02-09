@@ -1,0 +1,51 @@
+{
+	"periodicity": 300,
+	"senderAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
+	"receiverAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
+	"supplierTokens": [
+		{
+			"description": "ETH (OP), total 0.001 ETH",
+			"address": "0x0000000000000000000000000000000000000000",
+			"maximumRebalance": "0.0001",
+			"decimals": 18,
+			"chainID": "eip155:10"
+		},
+		{
+			"description": "USDC (OP), total 1 USDC",
+			"address": "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+			"maximumRebalance": "1",
+			"decimals": 6,
+			"chainID": "eip155:10"
+		},
+		{
+			"description": "OP (OP), total 0.1 OP",
+			"address": "0x4200000000000000000000000000000000000042",
+			"maximumRebalance": "0.1",
+			"decimals": 18,
+			"chainID": "eip155:10"
+		}
+	],
+	"monitoredTokens": [
+		{
+			"description": "USDC (Polygon), minimum 1 USDC",
+			"address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+			"minimumBalance": "0.1",
+			"decimals": 6,
+			"chainID": "eip155:137"
+		},
+		{
+			"description": "MATIC (Polygon), minimum 0.1 MATIC",
+			"address": "0x0000000000000000000000000000000000000000",
+			"minimumBalance": "0.1",
+			"decimals": 18,
+			"chainID": "eip155:137"
+		},
+		{
+			"description": "ETH (Base), minimum 0.0001 ETH",
+			"address": "0x0000000000000000000000000000000000000000",
+			"minimumBalance": "0.0001",
+			"decimals": 18,
+			"chainID": "eip155:8453"
+		}
+	]
+}
