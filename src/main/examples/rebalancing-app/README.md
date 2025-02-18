@@ -23,16 +23,13 @@ outes.ts`.da
 ### Configuration
 1. Copy the example environment file and update it with your credentials. This should include your Blockdaemon API Key and MNEMONIC for deriving wallet private keys. This is the same step as the `README.md` in the root of the project
 
-2. Example application configuraration: update the rebalancing configuration file. For example, you could edit `rebalance-config-op-polygon.json` to set your monitored and supplier tokens, thresholds, sender, and receiver addresses:
+2. Example application configuraration: update the rebalancing configuration file. For example, you could edit `rebalance-config-op-polygon.json` to set your monitored and supplier tokens, thresholds, sender, and receiver addresses. The `periodicity` sets how many seconds to check balances of monitored tokens for rebalancing (in the example, 10 seconds between each check). The `senderAddress` sets the sender which pays the rebalancing process. The `receiverAddress` receives tokens for rebalancing. The `supplierTokens` are the tokens that are provided and swapped for implementing a rebalance. The `monitoredTokens` are watched to make sure its balance does not go under the specific amount `minimumBalance`. Example:
 
 ```json
-// filepath: src/main/examples/rebalancing-app/rebalance-config-op-polygon.json
 {
-  "periodicity": 300, // how many seconds to check balances of monitored tokens for rebalancing
+  "periodicity": 30, // 
   "senderAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
   "receiverAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
-  // sender (paying to rebalance) and receiver (receives tokens for rebalancing) accounts´
-  // tokens we will swap for rebalancing
   "supplierTokens": [
     {
       "description": "ETH (OP), total 0.001 ETH",
@@ -43,7 +40,6 @@ outes.ts`.da
     },
 	[...]
   ],
-  // tokens and balances we want to assure do not fall under a certain threshold, for a certain receiverAddress
   "monitoredTokens": [
     {
       "description": "USDC (Polygon), minimum 1 USDC",
@@ -57,11 +53,11 @@ outes.ts`.da
 ```
 
 ### Running the Application
-Execute the rebalancing application with the configured file. For example, if you want to use the Polygon configuration:
+Execute the rebalancing application with the configured file. You can do this by executing `pnpm run start -- --config=src/main/examples/rebalancing-app/YOUR_CONFIG.json`. For example, if you want to use the Polygon configuration:
 
 `pnpm run start -- --config=src/main/examples/rebalancing-app/rebalance-config-op-polygon.json`
 
-The application will:
+If you do not provide a configuration file, the application will fallback to the default configuration (`rebalance-config-op-polygon.json`). The application will:
 
 1. Periodically check monitored token balances.
 2. Determine if a rebalance is required.

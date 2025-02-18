@@ -1,5 +1,5 @@
 {
-	"periodicity": 300,
+	"periodicity": 30,
 	"senderAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
 	"receiverAddress": "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
 	"supplierTokens": [

@@ -1,4 +1,4 @@
-import { rebalanceConfig } from "./rebalance-config";
+import { initRebalanceConfig, getRebalanceConfig } from "./rebalance-config";
 import { RebalanceJobManager } from "./rebalance-job-manager";
 import {
   ExchangeApi,
@@ -10,14 +10,15 @@ import { apiConfig, log } from "../../utils/common";
 const logger = log.getLogger("rebalancing-app");
 
 async function main() {
+  await initRebalanceConfig();
   const jobManager = new RebalanceJobManager(
-    rebalanceConfig,
+    getRebalanceConfig(),
     new ExchangeApi(apiConfig),
     new ApprovalsApi(apiConfig),
     new BalancesApi(apiConfig),
   );
   jobManager.start();
-
+  const jobStatisticsInterval = getRebalanceConfig().periodicity * 1000;
   // check statistics every job
   setInterval(() => {
     try {
@@ -35,7 +36,7 @@ async function main() {
     } catch (error) {
       logger.error("Error printing job logs:", error);
     }
-  }, rebalanceConfig.periodicity);
+  }, jobStatisticsInterval);
 }
 
 main().catch((error) => {

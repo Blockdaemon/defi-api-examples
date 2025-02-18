@@ -4,13 +4,16 @@ import type {
   GetRoutesRequest,
   Route,
   BalancesApi,
+  GetBalancesRequest,
+  BalancesResponse,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { log } from "../../utils/common";
-import { walletApprovalConfig, type RebalanceConfig } from "./rebalance-config";
+import { getWalletApprovalConfig } from "./rebalance-config";
 import { getRoutes, executeSwap } from "../../endpoints/routes";
 import { handleTokenApproval } from "../../endpoints/approval";
 import { checkTransactionStatus } from "../../endpoints/status";
 import { tokenUnitsToDecimals } from "../../utils/token";
+import { RebalanceConfig } from "./rebalance-types";
 
 const logger = log.getLogger("rebalance-job-manager");
 
@@ -42,13 +45,15 @@ export class RebalanceJobManager {
   private timer?: NodeJS.Timer;
   private readonly MAX_RETRIES = 3;
   private readonly STATUS_CHECK_INTERVAL = 5000;
-
+  private JOB_PERIDIOCITY = 0;
   constructor(
     private config: RebalanceConfig,
     private exchangeApi: ExchangeApi,
     private approvalsApi: ApprovalsApi,
     private balancesApi: BalancesApi,
-  ) {}
+  ) {
+    this.JOB_PERIDIOCITY = this.config.periodicity * 1000;
+  }
 
   public start(): void {
     this.scheduleJobCreation();
@@ -60,14 +65,14 @@ export class RebalanceJobManager {
   private scheduleJobCreation(): void {
     this.timer = setInterval(() => {
       this.createJob();
-    }, this.config.periodicity * 1000);
+    }, this.JOB_PERIDIOCITY);
   }
   private async createJob(): Promise<void> {
     // if already processing, waits double peridiocity
     if (this.isProcessing) {
       logger.info("Job already running, waiting before creating new job");
       await new Promise((resolve) =>
-        setTimeout(resolve, this.config.periodicity * 2000),
+        setTimeout(resolve, this.JOB_PERIDIOCITY * 2),
       );
       return;
     }
@@ -147,11 +152,27 @@ export class RebalanceJobManager {
     tokenAddress: string,
     accountAddress: string,
   ): Promise<bigint> {
-    // TODO
-    logger.trace(
-      `Getting balance for token ${tokenAddress} on chain ${chainId}, account ${accountAddress}`,
+    const request: GetBalancesRequest = {
+      accountAddress: accountAddress,
+      chainIDs: [chainId],
+      tokenAddress: tokenAddress,
+    };
+    const balanceResponse: BalancesResponse =
+      await this.balancesApi.getBalances(request);
+    logger.debug(`Balance response: ${JSON.stringify(balanceResponse)}`);
+
+    const balance = balanceResponse.balances[0].tokenBalances[0].amount;
+    if (!balance) {
+      throw new Error(
+        `No balance found for token ${tokenAddress} on chain ${chainId}`,
+      );
+    }
+    const balanceUSD = balanceResponse.balances[0].tokenBalances[0].amountUSD;
+    logger.info(
+      `Balance for token ${tokenAddress} on chain ${chainId}: ${balance} (${balanceUSD} USD)`,
     );
-    throw new Error("Method not implemented.");
+
+    return BigInt(balance);
   }
 
   /**
@@ -189,7 +210,12 @@ export class RebalanceJobManager {
       // 3. Get a route using the helper function.
       let selectedRoute: Route;
       try {
-        selectedRoute = await getRoutes(this.exchangeApi, routeParameters);
+        selectedRoute = await this.getPreferredOrFallbackRoute(
+          this.exchangeApi,
+          routeParameters,
+          "lifi", // preferred integrator
+          "squidrouter", // fallback
+        );
       } catch (error) {
         logger.error("Error getting route parameters:", error);
         throw error;
@@ -200,7 +226,7 @@ export class RebalanceJobManager {
       job.status = JobStatus.CHECKING_APPROVAL;
 
       const walletConfig =
-        walletApprovalConfig[
+        getWalletApprovalConfig()[
           routeParameters.fromChain === "optimism" ? "optimism" : "polygon"
         ];
 
@@ -218,10 +244,8 @@ export class RebalanceJobManager {
           "Approval required. Waiting for approval transaction confirmation...",
         );
         job.status = JobStatus.APPROVING;
-        await this.waitForConfirmation(
-          approvalTxHash,
-          routeParameters.fromChain,
-        );
+        await this.waitForConfirmation(approvalTxHash, routeParameters);
+
         job.approvalHash = approvalTxHash;
         logger.info("Approval transaction confirmed.");
       } else {
@@ -246,10 +270,7 @@ export class RebalanceJobManager {
         throw error;
       }
       job.swapHash = swapResult.hash;
-      await this.waitForConfirmation(
-        swapResult.hash,
-        routeParameters.fromChain,
-      );
+      await this.waitForConfirmation(swapResult.hash, routeParameters);
 
       // Job completed successfully.
       job.status = JobStatus.COMPLETED;
@@ -288,30 +309,31 @@ export class RebalanceJobManager {
 
   private async waitForConfirmation(
     hash: string,
-    chainId: string,
+    routeParams: GetRoutesRequest,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       const interval = setInterval(async () => {
         try {
-          await checkTransactionStatus(this.statusApi, {
-            fromChain: chainId,
+          // Include the missing fields in GetStatusRequest
+          await checkTransactionStatus(this.exchangeApi, {
+            fromChain: routeParams.fromChain,
+            toChain: routeParams.toChain,
             transactionID: hash,
+            targetID: routeParams.toAddress,
           });
-          logger.info(`Transaction ${hash} confirmed on chain ${chainId}`);
+          logger.info(
+            `Transaction ${hash} confirmed fromChain ${routeParams.fromChain} toChain ${routeParams.toChain}`,
+          );
           clearInterval(interval);
           resolve();
         } catch (error) {
-          logger.error(
-            `Error checking transaction status for ${hash} on chain ${chainId}:`,
-            error,
-          );
+          logger.error(`Error checking transaction status for ${hash}:`, error);
           clearInterval(interval);
           reject(error);
         }
       }, this.STATUS_CHECK_INTERVAL);
     });
   }
-
   private findBestRouteParameters(): GetRoutesRequest | null {
     // For now, using first supplier and monitored token
     // TODO: Implement more complex logic to find best route
@@ -378,5 +400,35 @@ export class RebalanceJobManager {
       clearInterval(this.timer);
     }
     logger.info("Job manager stopped");
+  }
+
+  private async getPreferredOrFallbackRoute(
+    exchangeApi: ExchangeApi,
+    routeParameters: GetRoutesRequest,
+    preferredIntegrator: string,
+    fallbackIntegrator = "squidrouter",
+  ): Promise<Route> {
+    try {
+      const mainRoute = await getRoutes(
+        exchangeApi,
+        routeParameters,
+        preferredIntegrator,
+      );
+      return mainRoute;
+    } catch (mainErr) {
+      logger.error(`Failed to get route with preferred integrator: ${mainErr}`);
+      try {
+        const fallbackRoute = await getRoutes(
+          exchangeApi,
+          routeParameters,
+          fallbackIntegrator,
+        );
+        return fallbackRoute;
+      } catch (fallbackErr) {
+        throw new Error(
+          `Failed to get route with both preferred and fallback integrators: ${fallbackErr}`,
+        );
+      }
+    }
   }
 }

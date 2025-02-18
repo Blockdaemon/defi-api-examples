@@ -13,52 +13,19 @@ import {
   OPTIMISM_RPC,
   POLYGON_RPC,
 } from "../../utils/common";
+import {
+  RebalanceConfig,
+  walletApprovalConfig,
+  SupplierTokenConfig,
+  MonitoredTokenConfig,
+} from "./rebalance-types";
 
 dotenv.config({ path: join(__dirname, "../../../../.env") });
 const defaultConfigPath = join(__dirname, "rebalance-config-op-polygon.json");
 const logger = log.getLogger("rebalancing-app-config");
 
-interface TokenApprovalWallet {
-  address: string;
-  privateKey: string;
-}
-
-interface walletConfig {
-  wallet: TokenApprovalWallet;
-  rpcUrl: string;
-}
-
-interface walletApprovalConfig {
-  polygon: walletConfig;
-  optimism: walletConfig;
-}
-
-interface SupplierTokenConfig {
-  description: string;
-  address: string;
-  chainID: string;
-  maximumRebalance: string;
-  token?: Token;
-}
-
-interface MonitoredTokenConfig {
-  description: string;
-  address: string;
-  chainID: string;
-  token?: Token;
-  minimumBalance: string;
-}
-
-export interface RebalanceConfig {
-  periodicity: number;
-  senderAddress: string;
-  receiverAddress: string;
-  supplierTokens: SupplierTokenConfig[];
-  monitoredTokens: MonitoredTokenConfig[];
-}
-
 let rebalanceConfig: RebalanceConfig;
-let walletApprovalConfig: walletApprovalConfig;
+let walletApprovalConfigVar: walletApprovalConfig;
 
 async function validateAvailableChainsAndTokens(config: RebalanceConfig) {
   const chainsApi = new ChainsApi(apiConfig);
@@ -209,11 +176,44 @@ async function setupConfig() {
   try {
     const config = await setupConfig();
     rebalanceConfig = config.rebalanceConfig;
-    walletApprovalConfig = config.walletApprovalConfig;
+    walletApprovalConfigVar = config.walletApprovalConfig;
   } catch (error) {
     logger.error("Failed to validate configuration:", error);
     process.exit(1);
   }
 })();
 
-export { rebalanceConfig, walletApprovalConfig };
+export function getWalletApprovalConfig(): walletApprovalConfig {
+  if (!walletApprovalConfigVar) {
+    throw new Error("Wallet approval config not initialized");
+  }
+  return walletApprovalConfigVar;
+}
+
+export async function initRebalanceConfig(): Promise<void> {
+  const configData = loadConfigData();
+  await validateAvailableChainsAndTokens(configData);
+  rebalanceConfig = configData;
+  walletApprovalConfigVar = {
+    polygon: {
+      wallet: {
+        address: configData.senderAddress,
+        privateKey: getWallet("optimism").privateKey,
+      },
+      rpcUrl: OPTIMISM_RPC,
+    },
+    optimism: {
+      wallet: {
+        address: configData.senderAddress,
+        privateKey: getWallet("polygon").privateKey,
+      },
+      rpcUrl: POLYGON_RPC,
+    },
+  };
+}
+export function getRebalanceConfig(): RebalanceConfig {
+  if (!rebalanceConfig) {
+    throw new Error("Rebalance config not initialized");
+  }
+  return rebalanceConfig;
+}

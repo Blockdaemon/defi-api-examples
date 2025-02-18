@@ -7,7 +7,6 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 
 ## Getting started
 
-
 ### Running the tool
 
 1. Install node 21.5.0 (using nvm: `nvm install 21.5.0 && nvm use 21.5.0`)
@@ -38,7 +37,18 @@ We also have the following utility scripts, under `src/main/utils`:
 * `sign-and-broadcast-transaction (utility script)` (signs and broadcasts a transaction to the blockchain)
 * `create-wallet (utility script)` (locally creates an EVM wallet)
 
-### Common issues and Troubleshooting
+
+## Examples
+There are example applications under `src/main/examples` that illustrate the functionalities and flexibility of the DEFI APIs. More information about each specific app is in its `README.md`. Currently we have one example app at `src/main/examples/rebalancing-app`.
+
+### Legal Warning ⚠️🚨
+
+The example applications provided in this repository are intended solely as starting points to help you learn about the DEFI API and its capabilities. We do not provide any guarantees regarding their usage, and they should not be used in production environments. For more information or assistance, please contact our team through our [support page](https://www.blockdaemon.com/support).
+
+### Rebalancing-app
+Rebalancing ensures that monitored token balances remain within predefined thresholds. This is vital in an environment where liquidity is critical (operational efficiency, risk mitigation, automation). The rebalancing application (`rebalance-main.ts`) demonstrates how to maintain healthy token balances by monitoring and correcting imbalances between accounts using Blockdaemon's DEFI API. By combining several API endpoints to check balances, fetch token data, calculate swap routes, and execute token transfers, the tool ensures liquidity is maintained and trading or operational objectives are met.
+
+## Common issues and Troubleshooting
 For issues related to the code in this repository, please use the [issues tracker](https://github.com/Blockdaemon/defi-api-examples/issues). 
 
 #### Why do I need to put a mnemonic in the .env?
