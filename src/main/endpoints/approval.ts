@@ -2,8 +2,8 @@ import type {
   ModifyTokenApprovalRequest,
   Route,
   GetRoutesRequest,
-  GetTokenApprovalRequest,
   TokenApprovalData,
+  GetTokenApprovalRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import type { ApprovalsApi } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { signAndBroadcastTransaction } from "../endpoints/wallet";

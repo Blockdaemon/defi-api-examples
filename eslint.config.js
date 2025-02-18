@@ -16,11 +16,19 @@ module.exports = [
       "@typescript-eslint": typescript,
     },
     rules: {
-      ...typescript.configs["recommended"].rules,
+      ...typescript.configs.recommended.rules,
+      "no-unused-expressions": "off",
       "no-prototype-builtins": "error",
       "@typescript-eslint/no-duplicate-enum-values": "warn",
       "@typescript-eslint/no-var-requires": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+        },
+      ],
       "no-dupe-class-members": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [

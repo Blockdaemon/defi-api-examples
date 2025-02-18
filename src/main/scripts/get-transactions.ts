@@ -28,8 +28,8 @@ async function main() {
     try {
       const transactions =
         await transactionsAPI.getTransactions(transactionsRequest);
-      logger.info(
-        `Got transactions successfully, request number: ${requestNumber + 1}, getting ${limit} transactions`,
+      logger.debug(
+        `Getting transactions. Request number: ${requestNumber + 1}, getting ${limit} transactions`,
       );
 
       // Append new transactions to the array
@@ -48,13 +48,15 @@ async function main() {
     }
   } while (page);
 
-  logger.info(
+  logger.debug(
     `Transactions:\n${allTransactions
       .map((tx) => `${tx.explorerLink}`)
       .reverse()
       .join("\n\n")}`,
   );
-  logger.info(`Total number of transactions: ${allTransactions.length}`);
+  logger.info(
+    `Got transactions successfully. Total number of transactions: ${allTransactions.length}`,
+  );
   process.exit(0);
 }
 

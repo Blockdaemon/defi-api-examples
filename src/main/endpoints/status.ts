@@ -1,6 +1,6 @@
 import {
   type GetStatusRequest,
-  type StatusApi,
+  type ExchangeApi,
   StatusEnum,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError, isSdkErrorResponse } from "../utils/error";
@@ -9,15 +9,15 @@ import { log } from "../utils/common";
 const scriptName = "utils-status";
 const logger = log.getLogger(scriptName);
 
-const WAIT_TIME = 15000; // 15 seconds
+const WAIT_TIME = 5000; // 5 seconds
 const MAX_RETRIES = 3;
 export async function checkTransactionStatus(
-  statusAPI: StatusApi,
+  exchangeAPI: ExchangeApi,
   request: GetStatusRequest,
 ): Promise<void> {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
-      const approvalStatus = await statusAPI.getStatus(request);
+      const approvalStatus = await exchangeAPI.getStatus(request);
 
       if (approvalStatus.status === StatusEnum.Done) {
         logger.info("Status of transaction is DONE");
@@ -44,14 +44,17 @@ export async function checkTransactionStatus(
         // continue
       }
     } catch (error) {
-      logger.error(
-        `Failure at ${scriptName} - Attempt ${attempt + 1} of ${MAX_RETRIES}`,
+      logger.warn(
+        `Failure at ${scriptName} - Attempt ${attempt + 1} of ${MAX_RETRIES}. Retrying...`,
       );
-      await handleApiError(error, logger);
       if (attempt < MAX_RETRIES - 1) {
         await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
+      } else {
+        await handleApiError(error, logger);
       }
     }
   }
-  throw new Error(`Transaction status not DONE after ${MAX_RETRIES} attempts`);
+  throw new Error(
+    `Transaction status not completed after ${MAX_RETRIES} attempts`,
+  );
 }

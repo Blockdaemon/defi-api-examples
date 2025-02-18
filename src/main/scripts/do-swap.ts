@@ -1,6 +1,5 @@
 import {
   ExchangeApi,
-  StatusApi,
   ApprovalsApi,
   TokensApi,
   type GetRoutesRequest,
@@ -27,7 +26,6 @@ const logger = log.getLogger(scriptName);
 async function main() {
   const exchangeAPI = new ExchangeApi(apiConfig);
   const approvalsAPI = new ApprovalsApi(apiConfig);
-  const statusAPI = new StatusApi(apiConfig);
   const tokensAPI = new TokensApi(apiConfig);
 
   let sourceToken: Token;
@@ -36,13 +34,13 @@ async function main() {
   try {
     // choose your source chain token
     const tokensParametersOP: GetTokensRequest = {
-      tokenSymbol: "USDC",
+      tokenSymbol: "OP",
       chainID: "eip155:10",
     };
 
     // choose token you want to receive and in which chain
     const tokensParametersPol: GetTokensRequest = {
-      tokenSymbol: "USDC",
+      tokenSymbol: "MATIC",
       chainID: "eip155:137",
     };
 
@@ -60,8 +58,8 @@ async function main() {
     throw new Error("Could not find tokens");
   }
 
-  // ! IMPORTANT: we calculate the amount with decimals below, but the amountToTransfer should be the integer amount of tokens
-  const amountToTransfer: string = "1";
+  // this function converts the amount of tokens from base units (decimals) to token units
+  const amountToTransfer: string = "0.01";
   const amountToTransferUnits = tokenUnitsToDecimals(
     amountToTransfer,
     targetToken,
@@ -83,7 +81,12 @@ async function main() {
   };
 
   try {
-    const selectedRoute: Route = await getRoutes(exchangeAPI, routeParameters);
+    // we express a preference for routes going via squidrouter
+    const selectedRoute: Route = await getRoutes(
+      exchangeAPI,
+      routeParameters,
+      "squidrouter",
+    );
 
     // create approval if needed
     const approvalTxHash = await handleTokenApproval(
@@ -96,37 +99,39 @@ async function main() {
     );
 
     if (approvalTxHash) {
-      logger.info("Approval needed. Checking for approval status...");
+      logger.debug("Approval needed. Checking for approval status...");
       const checkParams = {
         fromChain: routeParameters.fromChain,
         toChain: routeParameters.fromChain,
         transactionID: approvalTxHash.toString(),
+        targetID: "485dc835-b4a1-5cee-9c3d-a4e2e224ad56",
       };
-      await checkTransactionStatus(statusAPI, checkParams);
+      await checkTransactionStatus(exchangeAPI, checkParams);
     } else {
-      logger.info("No new approval needed.");
+      logger.debug("No new approval needed.");
     }
-    logger.info("Sending bridging transaction...");
+    logger.debug("Sending bridging transaction...");
     const swapResult = await executeSwap(
       selectedRoute,
       optimismWallet,
       OPTIMISM_RPC,
     );
-    logger.info("Swap transaction broadcast successfully");
-    logger.info("Transaction hash:", swapResult.hash);
+    logger.debug(`Transaction hash:" ${swapResult.hash}`);
     logger.info(
-      `Check transaction at: https://optimistic.etherscan.io/tx/${swapResult.hash}`,
+      `Cross-chain swap transaction with source chain OPTIMISM can be consulted at: https://optimistic.etherscan.io/tx/${swapResult.hash}`,
     );
 
+    logger.info("Checking transaction status using the status API...");
     const checkParamsSwap = {
       fromChain: routeParameters.fromChain,
       toChain: routeParameters.toChain,
       transactionID: swapResult.hash.toString(),
+      targetID: selectedRoute.targetID,
     };
-    await checkTransactionStatus(statusAPI, checkParamsSwap);
+    await checkTransactionStatus(exchangeAPI, checkParamsSwap);
 
     logger.info(
-      "Transaction completed successfully. Please check your balances.",
+      "Transaction validated by the Status API. Please check your balances using the balances API.",
     );
     process.exit(0);
   } catch (error) {

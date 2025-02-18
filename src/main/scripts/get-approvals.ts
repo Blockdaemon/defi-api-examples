@@ -34,15 +34,15 @@ async function main() {
     accountAddresses: [routeParameters.fromAddress],
   };
   try {
-    // get one approval
-    const approval = await approvalsAPI.getTokenApproval(getApprovalRequest);
-    logger.info("Got approval");
-    logger.debug(JSON.stringify(approval, null, 2));
     const allApprovals = await approvalsAPI.getAllApprovals(
       getAllApprovalsRequest,
     );
-    logger.info("Got all approvals");
+    logger.info("Got all approvals successfully");
     logger.debug(JSON.stringify(allApprovals, null, 2));
+
+    const approval = await approvalsAPI.getTokenApproval(getApprovalRequest);
+    logger.info("Got approval successfully");
+    logger.debug(JSON.stringify(approval, null, 2));
     process.exit(0);
   } catch (error) {
     logger.error(`Failure at ${scriptName}`);

@@ -4,7 +4,6 @@ import {
   ChainsApi,
   ApprovalsApi,
   TokensApi,
-  StatusApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "./utils/error";
 
@@ -25,9 +24,6 @@ async function main() {
     const tokens = new TokensApi(apiConfig);
     logger.info("Initialized Tokens API");
     logger.debug(tokens.getTokens.toString());
-    const status = new StatusApi(apiConfig);
-    logger.info("Initialized Status API");
-    logger.debug(status.getStatus.toString());
 
     logger.info("APIs initialized successfully");
     process.exit(0);

@@ -29,7 +29,7 @@ async function main() {
 
   try {
     const routes: RoutesResponse = await api.getRoutes(routeParameters);
-    logger.info("Got routes");
+    logger.info("Got routes successfully");
     if (routes.routes.length > 0) {
       logger.debug(JSON.stringify(routes.routes[0], null, 2));
     } else {

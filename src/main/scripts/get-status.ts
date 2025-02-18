@@ -1,8 +1,8 @@
 import { checkTransactionStatus } from "../endpoints/status";
 import { log, apiConfig } from "../utils/common";
 import {
+  ExchangeApi,
   type GetStatusRequest,
-  StatusApi,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { handleApiError } from "../utils/error";
 
@@ -10,7 +10,7 @@ const scriptName = "get-status";
 const logger = log.getLogger(scriptName);
 
 async function main() {
-  const statusAPI = new StatusApi(apiConfig);
+  const exchangeAPI = new ExchangeApi(apiConfig);
 
   const chainID = "eip155:10";
   const txHash =
@@ -22,13 +22,15 @@ async function main() {
     transactionID: txHash,
     // if we are looking for a cross-chain transaction status, the following ID should be set and different from fromChain
     toChain: chainID,
+    // use this target ID
+    targetID: "485dc835-b4a1-5cee-9c3d-a4e2e224ad56",
   };
 
   try {
-    await checkTransactionStatus(statusAPI, statusParams);
+    await checkTransactionStatus(exchangeAPI, statusParams);
 
-    const status = await statusAPI.getStatus(statusParams);
-    logger.info("Got status");
+    const status = await exchangeAPI.getStatus(statusParams);
+    logger.info("Got status successfully");
     logger.debug(JSON.stringify(status, null, 2));
     process.exit(0);
   } catch (error) {

@@ -1,6 +1,8 @@
 import type { Token } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { parseUnits } from "ethers";
 
+// ! IMPORTANT: we calculate the amount with decimals below, but the amountToTransfer should be the number of tokens
+// e.g., amountToTransfer is 1 token (independently of number of decimals)
 export function tokenUnitsToDecimals(
   amount: string | number,
   token: Token,

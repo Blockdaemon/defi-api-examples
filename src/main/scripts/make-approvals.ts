@@ -23,7 +23,7 @@ async function main() {
 
   try {
     const approval = await accountAPI.modifyTokenApproval(approvalMock);
-    logger.info("Got approval");
+    logger.info("Got approval modification request");
     logger.debug(JSON.stringify(approval, null, 2));
     process.exit(0);
   } catch (error) {

@@ -12,7 +12,7 @@ async function main() {
     const wallet = getWallet(walletName);
 
     // data to sign, this can be a transaction payload or any data you want to sign
-    const rawDataToSign = "hello world";
+    const rawDataToSign = "test";
     const signedMessage = await signMessage(logger, wallet, rawDataToSign);
 
     // simple broadcast of signed message
