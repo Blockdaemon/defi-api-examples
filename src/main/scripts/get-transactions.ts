@@ -9,6 +9,7 @@ import { handleApiError } from "../utils/error";
 
 const scriptName = "get-transactions";
 const logger = log.getLogger(scriptName);
+const MAX_REQUESTS = 3;
 
 async function main() {
   const transactionsAPI = new TransactionsApi(apiConfig);
@@ -20,7 +21,7 @@ async function main() {
   do {
     const transactionsRequest: GetTransactionsRequest = {
       accountAddress: "0xf271AAFC62634e6Dc9A276ac0f6145C4fDbE2Ced",
-      chainID: "eip155:1",
+      chainID: "eip155:10",
       limit,
       page,
     };
@@ -46,7 +47,7 @@ async function main() {
       await handleApiError(error, logger);
       process.exit(1);
     }
-  } while (page);
+  } while (page && requestNumber < MAX_REQUESTS);
 
   logger.debug(
     `Transactions:\n${allTransactions
