@@ -38,6 +38,14 @@ We also have the following utility scripts, under `src/main/utils`:
 * `sign-and-broadcast-transaction (utility script)` (signs and broadcasts a transaction to the blockchain)
 * `create-wallet (utility script)` (locally creates an EVM wallet)
 
+## Examples
+Currently we have one highly experimental example app at `src/main/examples/rebalancing-app`. While we encourage you to experiment with and learn from this example, please note it's available in a [separate branch](https://github.com/Blockdaemon/defi-api-examples/tree/rebalance-app-rebased/src/main/examples/rebalancing-app) and is provided as-is without any warranties.
+
+
+### Legal Warning ⚠️🚨
+
+The example applications provided in this repository are intended solely as starting points to help you learn about the DEFI API and its capabilities. They are experimental, not battle-tested yet, and we do not provide any guarantees regarding their usage. These examples should never be used in production environments. For more information or assistance, please contact our team through our [support page](https://www.blockdaemon.com/support).
+
 ### Common issues and Troubleshooting
 For issues related to the code in this repository, please use the [issues tracker](https://github.com/Blockdaemon/defi-api-examples/issues). 
 
