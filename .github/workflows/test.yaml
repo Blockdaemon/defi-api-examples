@@ -1,0 +1,56 @@
+name: Test All Scripts
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-scripts:
+    runs-on: ubuntu-latest
+    environment: test
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21.7.3'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          echo "BLOCKDAEMON_API_KEY=${{ secrets.BLOCKDAEMON_API_KEY }}" >> .env
+          echo "MNEMONIC=${{ secrets.MNEMONIC }}" >> .env
+          echo "RECEIVER_ADDRESS=${{ vars.RECEIVER_ADDRESS }}" >> .env
+          echo "LOG_LEVEL=debug" >> .env
+          
+      - name: Debug environment (safe values only)
+        run: |
+          echo "Testing with RECEIVER_ADDRESS=${RECEIVER_ADDRESS:0:10}..."
+          echo "Using Node.js $(node -v)"
+          echo "Using pnpm $(pnpm -v)"
+        env:
+          RECEIVER_ADDRESS: ${{ vars.RECEIVER_ADDRESS }}
+      
+      - name: Run all scripts
+        run: |
+          pnpm test
+        env:
+          BLOCKDAEMON_API_KEY: ${{ secrets.BLOCKDAEMON_API_KEY }}
+          MNEMONIC: ${{ secrets.MNEMONIC }}
+          RECEIVER_ADDRESS: ${{ vars.RECEIVER_ADDRESS }}
+          LOG_LEVEL: debug
+      
+      - name: Run utility scripts
+        run: |
+          pnpm exec ts-node src/main/utils/create-wallet.ts

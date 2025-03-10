@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./run-all-scripts.sh",
     "watch-tsc": "tsc --build --watch",
     "build": "tsc -p . --outDir ./build",
     "lint": "npm run format:eslint && npm run format:prettier",
