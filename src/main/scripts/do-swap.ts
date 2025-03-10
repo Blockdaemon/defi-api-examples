@@ -59,14 +59,15 @@ async function main() {
   }
 
   // this function converts the amount of tokens from base units (decimals) to token units
-  const amountToTransfer: string = "0.01";
+  // each run costs the fees of transferring 0.001 OP
+  const amountToTransfer: string = "0.001";
   const amountToTransferUnits = tokenUnitsToDecimals(
     amountToTransfer,
     targetToken,
   );
 
   logger.info(
-    `Transferring amount ${amountToTransferUnits} ${sourceToken.symbol} (${amountToTransfer} ${sourceToken.symbol}) from ${optimismWallet.address} to ${polygonWallet.address}`,
+    `Transferring amount ${amountToTransferUnits} ${sourceToken.symbol} (${amountToTransfer} ${sourceToken.symbol}) from ${optimismWallet.address} to ${polygonWallet.address} (${targetToken.symbol})`,
   );
 
   const routeParameters: GetRoutesRequest = {
