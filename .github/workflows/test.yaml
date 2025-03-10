@@ -3,13 +3,13 @@ name: Test All Scripts
 on:
   push:
     branches: [ main ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
   test-scripts:
     runs-on: ubuntu-latest
     environment: test
-    
     steps:
       - uses: actions/checkout@v3
       
