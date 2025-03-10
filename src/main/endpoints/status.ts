@@ -9,7 +9,7 @@ import { log } from "../utils/common";
 const scriptName = "utils-status";
 const logger = log.getLogger(scriptName);
 
-const WAIT_TIME = 10000; // 5 seconds
+const WAIT_TIME = 10000; // 10 seconds
 const MAX_RETRIES = 30;
 export async function checkTransactionStatus(
   exchangeAPI: ExchangeApi,
