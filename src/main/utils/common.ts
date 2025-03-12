@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import log4js from "log4js";
-import { Wallet, JsonRpcProvider, Network } from "ethers";
+import { Wallet, JsonRpcProvider, type HDNodeWallet } from "ethers";
 import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { Account, Aptos, AptosConfig, Network as AptosNetwork, Secp256k1PrivateKey } from "@aptos-labs/ts-sdk";
+import { Account, Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
 
 dotenv.config();
 
@@ -47,7 +47,7 @@ const config = new AptosConfig({ network: AptosNetwork.MAINNET });
 export const aptosProvider = new Aptos(config);
 
 const path = "m/44'/637'/0'/0'/0'";
-const aptosMnemonic =  process.env.APTOS_MNEMONIC || "";
+const aptosMnemonic =  process.env.MNEMONIC || "";
 export const aptosAccount = Account.fromDerivationPath({ path, mnemonic: aptosMnemonic });
 
 const mnemonic: string | undefined = process.env.MNEMONIC;
@@ -55,7 +55,7 @@ if (!mnemonic) {
   throw new Error("MNEMONIC is not defined");
 }
 
-const senderAddressFromMmemonic = new Wallet(mnemonic).address;
+const senderAddressFromMmemonic = Wallet.fromPhrase(mnemonic).address;
 
 export const SENDER_ADDRESS: string =
   senderAddressFromMmemonic ||
@@ -67,8 +67,8 @@ export const SENDER_ADDRESS: string =
 export const RECEIVER_ADDRESS: string =
   process.env.RECEIVER_ADDRESS || SENDER_ADDRESS;
 
-export const polygonWallet = new Wallet(mnemonic, polygonProvider);
-export const optimismWallet = new Wallet(mnemonic, optimismProvider);
+export const polygonWallet = Wallet.fromPhrase(mnemonic, polygonProvider);
+export const optimismWallet = Wallet.fromPhrase(mnemonic, optimismProvider);
 
 export const apiConfig = new Configuration({
   basePath: DEFI_API_BASE_PATH,
@@ -77,7 +77,7 @@ export const apiConfig = new Configuration({
   },
 });
 
-export function getWallet(name: string): Wallet {
+export function getWallet(name: string): HDNodeWallet {
   switch (name.toLowerCase()) {
     case "polygon":
       return polygonWallet;
