@@ -5,3 +5,4 @@ build
 test.ts
 .vscode/launch.json
 .vscode/settings.json
+.idea/
