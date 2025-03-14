@@ -12,8 +12,8 @@ importers:
         specifier: 1.35.0
         version: 1.35.0(axios@1.8.2)(got@11.8.6)
       '@blockdaemon/blockdaemon-defi-api-typescript-fetch':
-        specifier: '1.43'
-        version: 1.43.0
+        specifier: 1.46.0
+        version: 1.46.0
       dotenv:
         specifier: 16.3.1
         version: 16.3.1
@@ -84,8 +84,8 @@ packages:
     resolution: {integrity: sha512-ChW2Lvi6lKfEb0AYo0HAa98bYf0+935nMdjl40wFMWsR+mxFhtNA4EYINXsHVTMPfE/WV9sXEvDInvscJFrALQ==}
     engines: {node: '>=20.0.0'}
 
-  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.43.0':
-    resolution: {integrity: sha512-YznJiMjNN9PGvsG0byvauMB8m2t95kAy9dOBlTggvlmRfpg0BjAHZyA6eYu5kjqMNxqZqa9/Nq8pfRSzmmgFuQ==}
+  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.46.0':
+    resolution: {integrity: sha512-GenDLq/ZHus3ROIh5N0YFA2qllzuU97TnjZlTWGVGR85rt8h6Al+LYwfIBtinoW6jimZMvrS23kmC4+pT3eUwA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1616,7 +1616,7 @@ snapshots:
       - axios
       - got
 
-  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.43.0': {}
+  '@blockdaemon/blockdaemon-defi-api-typescript-fetch@1.46.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:

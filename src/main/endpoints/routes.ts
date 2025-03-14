@@ -5,7 +5,7 @@ import type {
   Route,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { aptosProvider, log } from "../utils/common";
-import { Account } from "@aptos-labs/ts-sdk";
+import {Account, MoveStructId} from "@aptos-labs/ts-sdk";
 
 const logger = log.getLogger("routes-endpoint");
 
@@ -66,20 +66,34 @@ export async function executeSwap(
 }
 
 export async function executeSwapAptos(
-  selectedRoute: Route,
-  aptosAccount: Account,
+    selectedRoute: Route,
+    aptosAccount: Account,
 ): Promise<{ hash: string }> {
   logger.info("Executing Aptos swap transaction...");
 
   const { transactionRequest } = selectedRoute;
-  
+
   try {
-    const txData = JSON.parse(transactionRequest.data);
+    if (transactionRequest.chainType !== 'aptos') {
+      throw new Error('Expected Aptos transaction but received: ' + transactionRequest.chainType);
+    }
+
+    const rawTxData = transactionRequest as any;
     
-    const formattedArguments = txData.payload.arguments.map((arg: any) => {
+    logger.debug("Processing Aptos transaction:", {
+      sender: rawTxData.sender,
+      function: rawTxData.payload.function,
+      typeArgs: rawTxData.payload.type_arguments,
+      args: rawTxData.payload.arguments
+    });
+
+    // Format the arguments properly
+    const formattedArguments = rawTxData.payload.arguments.map((arg: any) => {
+      // If argument is an array (like for bytes), convert it to Uint8Array
       if (Array.isArray(arg)) {
         return new Uint8Array(arg);
       }
+      // If argument is a hex string (starting with 0x), convert to bytes
       if (typeof arg === 'string' && arg.startsWith('0x')) {
         // Remove '0x' prefix and convert to Uint8Array
         const hexString = arg.slice(2);
@@ -99,19 +113,19 @@ export async function executeSwapAptos(
       }
       return arg;
     });
-    
+
     // Build the transaction using the parsed data
     const transaction = await aptosProvider.transaction.build.simple({
       sender: aptosAccount.accountAddress,
       data: {
-        function: txData.payload.function,
-        typeArguments: txData.payload.type_arguments,
+        function: rawTxData.payload.function as MoveStructId,
+        typeArguments: rawTxData.payload.type_arguments,
         functionArguments: formattedArguments
       },
       options: {
-        maxGasAmount: Number(txData.max_gas_amount),
-        gasUnitPrice: Number(txData.gas_unit_price),
-        expireTimestamp: Number(txData.expiration_timestamp_secs)
+        maxGasAmount: Number(rawTxData.max_gas_amount),
+        gasUnitPrice: Number(rawTxData.gas_unit_price),
+        expireTimestamp: Number(rawTxData.expiration_timestamp_secs)
       }
     });
 
@@ -121,12 +135,20 @@ export async function executeSwapAptos(
       transaction,
     });
 
-    logger.info(`Aptos swap transaction submitted successfully. Tx Hash: ${committedTxn.hash}`);
+    if (!committedTxn.hash) {
+      throw new Error("No transaction hash returned from submission");
+    }
 
-    await aptosProvider.waitForTransaction({ transactionHash: committedTxn.hash });
+    const txHash = committedTxn.hash.startsWith('0x') ? committedTxn.hash : `0x${committedTxn.hash}`;
+    logger.info(`Aptos swap transaction submitted successfully. Tx Hash: ${txHash}`);
 
-    logger.info(`Transaction executed and committed: ${committedTxn.hash}`);
-    return { hash: committedTxn.hash };
+    // Wait for transaction to be confirmed
+    await aptosProvider.waitForTransaction({ 
+      transactionHash: txHash
+    });
+
+    logger.info(`Transaction executed and committed: ${txHash}`);
+    return { hash: txHash };
   } catch (error) {
     logger.error("Failed to execute Aptos transaction:", error);
     throw new Error(`Aptos transaction execution failed: ${error}`);
