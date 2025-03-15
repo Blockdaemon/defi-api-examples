@@ -4,12 +4,23 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted]
   workflow_dispatch:
 
 jobs:
   test-scripts:
     runs-on: ubuntu-latest
     environment: test
+    # Only run tests on:
+    # 1. Push to main (for automatic runs after merge)
+    # 2. PR review submitted with "approved" state
+    # 3. Manual workflow dispatch
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved')
     steps:
       - uses: actions/checkout@v3
       
