@@ -14,6 +14,9 @@ export async function signAndBroadcastTransaction(
   privateKey: string,
   rpcUrl: string,
 ): Promise<TransactionResponse> {
+  if (transactionRequest.chainType !== 'evm') {
+    throw new Error('Expected Evm transaction but received: ' + transactionRequest.chainType);
+  }
   const from = transactionRequest.from;
   const to = transactionRequest.to;
   const value = transactionRequest.value || parseUnits("0");

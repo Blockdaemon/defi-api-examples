@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import log4js from "log4js";
 import { Wallet, JsonRpcProvider, type HDNodeWallet } from "ethers";
 import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import { Account, Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
 
 dotenv.config();
 
@@ -41,6 +42,13 @@ export const OPTIMISM_RPC =
 
 export const polygonProvider = new JsonRpcProvider(POLYGON_RPC);
 export const optimismProvider = new JsonRpcProvider(OPTIMISM_RPC);
+
+const config = new AptosConfig({ network: AptosNetwork.MAINNET });
+export const aptosProvider = new Aptos(config);
+
+const path = "m/44'/637'/0'/0'/0'";
+const aptosMnemonic =  process.env.MNEMONIC || "";
+export const aptosAccount = Account.fromDerivationPath({ path, mnemonic: aptosMnemonic });
 
 const mnemonic: string | undefined = process.env.MNEMONIC;
 if (!mnemonic) {
