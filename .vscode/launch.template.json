@@ -1,32 +1,52 @@
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "TAP: Current TS Test File",
-      "type": "node",
-      "request": "launch",
-      "env": {
-        "TS_NODE_PROJECT": "tsconfig.json",
-        "OFF-HFC_LOGGING": "{\"debug\":\"console\",\"info\":\"console\"}"
+  {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "TAP: Current TS Test File",
+        "type": "node",
+        "request": "launch",
+        "env": {
+          "TS_NODE_PROJECT": "tsconfig.json",
+          "OFF-HFC_LOGGING": "{\"debug\":\"console\",\"info\":\"console\"}"
+        },
+        "args": ["--async-stack-traces", "${relativeFile}"],
+        "runtimeArgs": ["--require", "ts-node/register"],
+        "console": "integratedTerminal",
+        "sourceMaps": true,
+        "cwd": "${workspaceRoot}",
+        "skipFiles": ["<node_internals>/**"]
       },
-      "args": ["--async-stack-traces", "${relativeFile}"],
-      "runtimeArgs": ["--require", "ts-node/register"],
-      "console": "integratedTerminal",
-      "sourceMaps": true,
-      "cwd": "${workspaceRoot}",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "TAP: Current JS Test File",
-      "console": "integratedTerminal",
-      "program": "${workspaceFolder}/${relativeFile}",
-      "cwd": "${workspaceFolder}",
-      "runtimeArgs": ["--async-stack-traces"],
-      "args": ["--timeout=9999999"],
-      "outFiles": ["dist/lib/*"],
-      "env": {}
-    }
-  ]
-}
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "TAP: Current JS Test File",
+        "console": "integratedTerminal",
+        "program": "${workspaceFolder}/${relativeFile}",
+        "cwd": "${workspaceFolder}",
+        "runtimeArgs": ["--async-stack-traces"],
+        "args": ["--timeout=9999999"],
+        "outFiles": ["dist/lib/*"],
+        "env": {}
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Run Rebalance App Example",
+        "type": "node",
+        "request": "launch",
+        "runtimeArgs": [
+          "ts-node",
+          "--files"
+        ],
+        "args": [
+          "src/main/examples/rebalancing-app/rebalance-main.ts",
+          "--config=src/main/examples/rebalancing-app/rebalance-config-op-polygon.json"
+        ],
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "TS_NODE_PROJECT": "tsconfig.json"
+        }
+      } 
+    ]
+  }

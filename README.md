@@ -1,16 +1,18 @@
+[![Test All Scripts](https://github.com/Blockdaemon/defi-api-examples/actions/workflows/test.yaml/badge.svg)](https://github.com/Blockdaemon/defi-api-examples/actions/workflows/test.yaml) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
 # defi-api-examples
 
 This repository comprise a set of scripts that leverages BD's DEFI API. The script collection guides the creation of an application that leverages the DEFI API and has cross-chain token transfer capabilities. This example comprises cross-chain operations where the source chain is Optimism and the target chain Polygon. The deployed version of the DEFI API, that the examples point to, is available in the file [VERSION](./VERSION).
 
 ### Requirements
-This is a Typescript project. Npm as package manager and node. Tested with npm v10.2.4, node 21.5.0. We recommend using [nvm](https://github.com/nvm-sh/nvm) for node version management.
+This is a Typescript project. Npm as package manager and node. Tested with npm v10.2.4, node 22.14.0. We recommend using [nvm](https://github.com/nvm-sh/nvm) for node version management.
 
 ## Getting started
 
 
 ### Running the tool
 
-1. Install node 21.5.0 (using nvm: `nvm install 21.7.3 && nvm use 21.7.3`)
+1. Install node 22.14.0 (using nvm: `nvm install 22.14.0 && nvm use 22.14.0`)
 
 2. Install the dependencies with [pnpm](https://pnpm.io/): `pnpm install`.
 
