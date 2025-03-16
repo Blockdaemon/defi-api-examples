@@ -4,12 +4,13 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   test-scripts:
     runs-on: ubuntu-latest
-    environment: test
+    environment: ${{ github.event_name == 'pull_request' && 'test' || 'test-main' }}
     steps:
       - uses: actions/checkout@v3
       
