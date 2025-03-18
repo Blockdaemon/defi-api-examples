@@ -1,7 +1,12 @@
 import dotenv from "dotenv";
 import log4js from "log4js";
 import { Wallet, JsonRpcProvider, type HDNodeWallet } from "ethers";
-import { Configuration } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
+import {
+  AptosTransactionRequest,
+  Configuration,
+  type EvmTransactionRequest,
+  type TransactionRequest
+} from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
 import { Account, Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
 
 dotenv.config();
@@ -86,4 +91,8 @@ export function getWallet(name: string): HDNodeWallet {
     default:
       throw new Error(`Wallet ${name} not found`);
   }
+}
+
+export function isAptosTransaction(tx: TransactionRequest): tx is (AptosTransactionRequest & { chainType: 'aptos' }) {
+  return tx.chainType === 'aptos';
 }

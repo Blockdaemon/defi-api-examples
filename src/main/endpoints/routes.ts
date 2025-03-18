@@ -4,7 +4,7 @@ import type {
   RoutesResponse,
   Route,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { aptosProvider, log } from "../utils/common";
+import {aptosProvider, isAptosTransaction, log} from "../utils/common";
 import {Account, MoveStructId} from "@aptos-labs/ts-sdk";
 
 const logger = log.getLogger("routes-endpoint");
@@ -74,7 +74,7 @@ export async function executeSwapAptos(
   const { transactionRequest } = selectedRoute;
 
   try {
-    if (transactionRequest.chainType !== 'aptos') {
+    if (!isAptosTransaction(transactionRequest)) {
       throw new Error('Expected Aptos transaction but received: ' + transactionRequest.chainType);
     }
 
