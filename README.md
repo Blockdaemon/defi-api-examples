@@ -30,7 +30,6 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 * `do-swap-evm-aptos` (performs a cross-chain token transfer from Optimism (ETH) to Aptos (WETH))
 * `get-approvals` (gets the status of an approval)
 * `get-chains` (gets the list of supported chains)
-* `get-prices` (gets token prices from a wide range of blockchains)
 * `get-routes` (gets a set of routes that satisfy a swap)
 * `get-status` (gets the status for a transaction)
 * `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
