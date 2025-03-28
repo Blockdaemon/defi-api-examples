@@ -1,0 +1,14 @@
+permissions:
+  contents: read
+  packages: read
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  security_scan:
+    uses: Blockdaemon/github-pipeline-blueprints/.github/workflows/security.yaml@main
+    secrets: inherit
