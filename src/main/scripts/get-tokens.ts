@@ -13,7 +13,7 @@ async function main() {
 
   // get USDC token data from polygon
   const tokensParameters: GetTokensRequest = {
-    tokenSymbol: "USDC",
+    tokenSymbol: "USDT",
     chainID: "eip155:137",
   };
 

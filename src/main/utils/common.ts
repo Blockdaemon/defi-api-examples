@@ -4,10 +4,14 @@ import { Wallet, JsonRpcProvider, type HDNodeWallet } from "ethers";
 import {
   AptosTransactionRequest,
   Configuration,
-  type EvmTransactionRequest,
-  type TransactionRequest
+  type TransactionRequest,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { Account, Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  Aptos,
+  AptosConfig,
+  Network as AptosNetwork,
+} from "@aptos-labs/ts-sdk";
 
 dotenv.config();
 
@@ -25,25 +29,25 @@ export const log: log4js.Log4js = log4js.configure({
 });
 
 const DEFI_API_BASE_PATH =
-    process.env.DEFI_API_BASE_PATH || "https://svc.blockdaemon.com/defi";
+  process.env.DEFI_API_BASE_PATH || "https://svc.blockdaemon.com/defi";
 
 export const API_KEY: string =
-    process.env.BLOCKDAEMON_API_KEY ||
-    (() => {
-      console.log("BLOCKDAEMON_API_KEY is not defined");
-      throw new Error("BLOCKDAEMON_API_KEY is not defined");
-    })();
+  process.env.BLOCKDAEMON_API_KEY ||
+  (() => {
+    console.log("BLOCKDAEMON_API_KEY is not defined");
+    throw new Error("BLOCKDAEMON_API_KEY is not defined");
+  })();
 
 export const POLYGON_RPC =
-    "https://svc.blockdaemon.com/polygon/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
-        "YOUR_API_KEY",
-        API_KEY,
-    );
+  "https://svc.blockdaemon.com/polygon/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
+    "YOUR_API_KEY",
+    API_KEY,
+  );
 export const OPTIMISM_RPC =
-    "https://svc.blockdaemon.com/optimism/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
-        "YOUR_API_KEY",
-        API_KEY,
-    );
+  "https://svc.blockdaemon.com/optimism/mainnet/native/http-rpc?apiKey=YOUR_API_KEY".replace(
+    "YOUR_API_KEY",
+    API_KEY,
+  );
 
 export const polygonProvider = new JsonRpcProvider(POLYGON_RPC);
 export const optimismProvider = new JsonRpcProvider(OPTIMISM_RPC);
@@ -52,8 +56,11 @@ const config = new AptosConfig({ network: AptosNetwork.MAINNET });
 export const aptosProvider = new Aptos(config);
 
 const path = "m/44'/637'/0'/0'/0'";
-const aptosMnemonic =  process.env.MNEMONIC || "";
-export const aptosAccount = Account.fromDerivationPath({ path, mnemonic: aptosMnemonic });
+const aptosMnemonic = process.env.MNEMONIC || "";
+export const aptosAccount = Account.fromDerivationPath({
+  path,
+  mnemonic: aptosMnemonic,
+});
 
 const mnemonic: string | undefined = process.env.MNEMONIC;
 if (!mnemonic) {
@@ -63,14 +70,14 @@ if (!mnemonic) {
 const senderAddressFromMmemonic = Wallet.fromPhrase(mnemonic).address;
 
 export const SENDER_ADDRESS: string =
-    senderAddressFromMmemonic ||
-    (() => {
-      console.log("SENDER_ADDRESS is not defined");
-      throw new Error("SENDER_ADDRESS is not defined");
-    })();
+  senderAddressFromMmemonic ||
+  (() => {
+    console.log("SENDER_ADDRESS is not defined");
+    throw new Error("SENDER_ADDRESS is not defined");
+  })();
 
 export const RECEIVER_ADDRESS: string =
-    process.env.RECEIVER_ADDRESS || SENDER_ADDRESS;
+  process.env.RECEIVER_ADDRESS || SENDER_ADDRESS;
 
 export const polygonWallet = Wallet.fromPhrase(mnemonic, polygonProvider);
 export const optimismWallet = Wallet.fromPhrase(mnemonic, optimismProvider);
@@ -93,6 +100,8 @@ export function getWallet(name: string): HDNodeWallet {
   }
 }
 
-export function isAptosTransaction(tx: TransactionRequest): tx is (AptosTransactionRequest & { chainType: 'aptos' }) {
-  return tx.chainType === 'aptos';
+export function isAptosTransaction(
+  tx: TransactionRequest,
+): tx is AptosTransactionRequest & { chainType: "aptos" } {
+  return tx.chainType === "aptos";
 }
