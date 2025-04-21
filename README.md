@@ -26,8 +26,8 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 7. Run the scripts with `npm exec ts-node src/main/scripts/SCRIPT.ts`, where `SCRIPT` can be:
 
 * `do-swap` (performs a cross-chain token transfer from Optimism to Polygon based on the first received route)
-* `do-swap-aptos-evm` (performs a cross-chain token transfer from Aptos (WETH) to Optimism ETH)
-* `do-swap-evm-aptos` (performs a cross-chain token transfer from Optimism (ETH) to Aptos (WETH))
+* `do-swap-non-evm-to-evm` (performs a cross-chain token transfer from Aptos (WETH) to Optimism ETH)
+* `do-swap-evm-to-non-evm` (performs a cross-chain token transfer from Optimism (ETH) to Aptos (WETH))
 * `get-approvals` (gets the status of an approval)
 * `get-chains` (gets the list of supported chains)
 * `get-routes` (gets a set of routes that satisfy a swap)

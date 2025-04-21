@@ -6,12 +6,7 @@ import {
   type GetTokensRequest,
   type Token,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import {
-  log,
-  aptosAccount,
-  optimismWallet,
-  apiConfig,
-} from "../utils/common";
+import { log, aptosAccount, optimismWallet, apiConfig } from "../utils/common";
 import { handleApiError } from "../utils/error";
 import { tokenUnitsToDecimals } from "../utils/token";
 import { checkTransactionStatus } from "../endpoints/status";
@@ -75,10 +70,7 @@ async function main() {
   try {
     const selectedRoute: Route = await getRoutes(exchangeAPI, routeParameters);
 
-    const swapResult = await executeSwapAptos(
-      selectedRoute,
-      aptosAccount
-    );
+    const swapResult = await executeSwapAptos(selectedRoute, aptosAccount);
     logger.debug(`Transaction hash: ${swapResult.hash}`);
     logger.info(
       `Cross-chain swap transaction from Aptos can be consulted at: https://explorer.aptoslabs.com/txn/${swapResult.hash}`,
@@ -91,7 +83,10 @@ async function main() {
       targetID: selectedRoute.targetID,
     };
 
-    logger.info("Checking transaction status using the status API...", checkParamsSwap);
+    logger.info(
+      "Checking transaction status using the status API...",
+      checkParamsSwap,
+    );
     await checkTransactionStatus(exchangeAPI, checkParamsSwap);
 
     logger.info(

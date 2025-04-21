@@ -3,7 +3,7 @@ import {
   type ExchangeApi,
   StatusEnum,
 } from "@blockdaemon/blockdaemon-defi-api-typescript-fetch";
-import { handleApiError, isSdkErrorResponse } from "../utils/error";
+import { handleApiError } from "../utils/error";
 import { log } from "../utils/common";
 
 const scriptName = "utils-status";
@@ -12,8 +12,8 @@ const logger = log.getLogger(scriptName);
 const WAIT_TIME = 10000; // 10 seconds
 const MAX_RETRIES = 30;
 export async function checkTransactionStatus(
-    exchangeAPI: ExchangeApi,
-    request: GetStatusRequest,
+  exchangeAPI: ExchangeApi,
+  request: GetStatusRequest,
 ): Promise<void> {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
@@ -30,13 +30,13 @@ export async function checkTransactionStatus(
       logger.info(`Current approval status: ${approvalStatus.status}`);
       if (attempt < MAX_RETRIES - 1) {
         logger.debug(
-            `Waiting for ${WAIT_TIME / 1000} seconds before retry ${attempt + 1} of ${MAX_RETRIES}`,
+          `Waiting for ${WAIT_TIME / 1000} seconds before retry ${attempt + 1} of ${MAX_RETRIES}`,
         );
         await delay(WAIT_TIME);
       }
     } catch (error) {
       logger.warn(
-          `Failure at ${scriptName} - Attempt ${attempt + 1} of ${MAX_RETRIES}. Retrying...`,
+        `Failure at ${scriptName} - Attempt ${attempt + 1} of ${MAX_RETRIES}. Retrying...`,
       );
       if (attempt < MAX_RETRIES - 1) {
         await delay(WAIT_TIME);
@@ -46,10 +46,10 @@ export async function checkTransactionStatus(
     }
   }
   throw new Error(
-      `Transaction status not completed after ${MAX_RETRIES} attempts`,
+    `Transaction status not completed after ${MAX_RETRIES} attempts`,
   );
 }
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
