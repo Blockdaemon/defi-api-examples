@@ -1,6 +1,6 @@
 {
-  "name": "defi-api-examples",
-  "version": "0.1.0",
+  "name": "defi-api-ts-examples",
+  "version": "0.2.0",
   "description": "",
   "main": "main.ts",
   "scripts": {
