@@ -1,12 +1,12 @@
 {
   "name": "defi-api-ts-examples",
-  "version": "0.2.0",
+  "version": "1.51.0",
   "description": "",
   "main": "main.ts",
   "scripts": {
     "test": "./run-all-scripts.sh",
     "watch-tsc": "tsc --build --watch",
-    "build": "tsc -p . --outDir ./build",
+    "build": "pnpm exec tsc -p . --outDir ./build",
     "lint": "npm run format:eslint && npm run format:prettier",
     "format:eslint": "eslint . --fix",
     "format:prettier": "prettier --write --config .prettierrc.js \"./**/{*.ts,*.js}\"",
@@ -31,12 +31,11 @@
     "eslint-config-standard": "17.1.0",
     "prettier": "3.3.3",
     "ts-node": "10.9.2",
-    "tsc": "2.0.4",
     "typescript": "5.3.3"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.36.0",
-    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "1.46.0",
+    "@blockdaemon/blockdaemon-defi-api-typescript-fetch": "1.51.0",
     "dotenv": "16.3.1",
     "ethers": "6.13.5",
     "log4js": "6.9.1",

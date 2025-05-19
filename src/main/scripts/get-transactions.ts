@@ -13,6 +13,9 @@ const MAX_REQUESTS = 3;
 
 async function main() {
   const transactionsAPI = new TransactionsApi(apiConfig);
+  const chains = await transactionsAPI.getSupportedChainsForTransactions();
+  logger.info("Got chains for transactions successfully");
+  logger.debug(JSON.stringify(chains, null, 2));
   let page: string | undefined = undefined;
   const limit = 10;
   let allTransactions: Transaction[] = [];
