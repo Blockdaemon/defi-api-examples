@@ -11,6 +11,9 @@ const logger = log.getLogger(scriptName);
 
 async function main() {
   const approvalsAPI = new ApprovalsApi(apiConfig);
+  const chains = await approvalsAPI.getSupportedChainsForApprovals();
+  logger.info("Got chains for approvals successfully");
+  logger.debug(JSON.stringify(chains, null, 2));
 
   const routeParameters = {
     fromChain: "eip155:1",
@@ -31,7 +34,7 @@ async function main() {
 
   const getAllApprovalsRequest: GetAllApprovalsRequest = {
     chainIDs: [routeParameters.fromChain],
-    accountAddresses: [routeParameters.fromAddress],
+    accountAddress: routeParameters.fromAddress,
   };
   try {
     const allApprovals = await approvalsAPI.getAllApprovals(

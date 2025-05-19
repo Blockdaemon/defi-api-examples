@@ -29,13 +29,13 @@ This is a Typescript project. Npm as package manager and node. Tested with npm v
 * `do-swap-non-evm-to-evm` (performs a cross-chain token transfer from Aptos (WETH) to Optimism ETH)
 * `do-swap-evm-to-non-evm` (performs a cross-chain token transfer from Optimism (ETH) to Aptos (WETH))
 * `get-approvals` (gets the status of an approval)
-* `get-chains` (gets the list of supported chains)
 * `get-routes` (gets a set of routes that satisfy a swap)
 * `get-status` (gets the status for a transaction)
 * `get-tokens-by-tag` (gets the list of supported tokens by specified tag)
 * `get-tokens` (gets the list of supported tokens)
 * `get-transactions` (gets the list of transactions for an address, over different chains)
 * `make-approvals` (creates a spend approval for an ERC20 token)
+* `send-transaction` 🚧 WIP 🚧
 
 We also have the following utility scripts, under `src/main/utils`:
 * `sign-and-broadcast-transaction (utility script)` (signs and broadcasts a transaction to the blockchain)

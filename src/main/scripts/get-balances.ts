@@ -17,6 +17,9 @@ async function main() {
   };
 
   try {
+    const chains = await balancesAPI.getSupportedChainsForBalances();
+    logger.info("Got chains for balancessuccessfully");
+    logger.debug(JSON.stringify(chains, null, 2));
     const balances = await balancesAPI.getBalances(balanceRequest);
     logger.info("Got balances successfully");
     logger.debug(JSON.stringify(balances, null, 2));
